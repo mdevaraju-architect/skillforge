@@ -1,0 +1,33 @@
+{
+  "name": "@skillforge/skills",
+  "version": "1.0.0",
+  "description": "CLI to install SkillForge agent skills into Claude Code and other AI coding agents",
+  "keywords": [
+    "salesforce",
+    "claude-code",
+    "agent-skills",
+    "skillforge",
+    "knowledgeforce",
+    "agentforce",
+    "fsc",
+    "financial-services-cloud"
+  ],
+  "homepage": "https://github.com/mdevaraju-architect/skillforge#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mdevaraju-architect/skillforge.git",
+    "directory": "cli"
+  },
+  "license": "MIT",
+  "bin": {
+    "skills": "./bin/skills.js"
+  },
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

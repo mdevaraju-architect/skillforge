@@ -4,7 +4,7 @@
   "description": "Enterprise Salesforce Agent Skills, MCP Plugins, and Agentforce Agent definitions for AI coding agents",
   "skills": [
     {
-      "name": "fsc-claims-process",
+      "name": "industries-fsc-claims-process",
       "path": "skills/industries/fsc/claims-process/SKILL.md",
       "domain": "industries/fsc",
       "approval-tier": "draft"
