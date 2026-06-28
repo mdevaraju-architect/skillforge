@@ -152,9 +152,10 @@ if [[ -n "$EXISTING_ACC" ]]; then
   warn "Person Account '$CLAIMANT_FIRST $CLAIMANT_LAST' already exists ($ACCOUNT_ID) — reusing."
 else
   info "Creating Person Account: $CLAIMANT_FIRST $CLAIMANT_LAST..."
+  PERSON_EMAIL=$(echo "${CLAIMANT_FIRST}.${CLAIMANT_LAST}" | tr '[:upper:]' '[:lower:]')@skillforge-demo.example.com
   ACC_RESULT=$(sf data create record \
     --sobject Account \
-    --values "FirstName='$CLAIMANT_FIRST' LastName='$CLAIMANT_LAST' RecordTypeId='$PA_RT' Phone='312-555-0199' PersonEmail='${CLAIMANT_FIRST,,}.${CLAIMANT_LAST,,}@skillforge-demo.example.com' BillingStreet='456 Demo Avenue' BillingCity='Chicago' BillingState='IL' BillingPostalCode='60601' BillingCountry='US'" \
+    --values "FirstName='$CLAIMANT_FIRST' LastName='$CLAIMANT_LAST' RecordTypeId='$PA_RT' Phone='312-555-0199' PersonEmail='$PERSON_EMAIL' BillingStreet='456 Demo Avenue' BillingCity='Chicago' BillingState='IL' BillingPostalCode='60601' BillingCountry='US'" \
     --target-org "$TARGET_ORG" --json 2>/dev/null)
   ACCOUNT_ID=$(echo "$ACC_RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['id'])" 2>/dev/null)
   [[ -z "$ACCOUNT_ID" ]] && fail "Failed to create Person Account."
@@ -235,11 +236,11 @@ if [[ "$SKIP_SKILL" == true ]]; then
   warn "Skipping skill installation (--skip-skill)"
 else
   info "Installing fsc-claims-process skill..."
-  if npx skills add mdevaraju-architect/skillforge --skill fsc-claims-process --agent claude-code -y 2>/dev/null; then
+  if npx skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent claude-code -y 2>/dev/null; then
     pass "Skill installed"
   else
     warn "Skill install failed — npx skills CLI may not be available."
-    warn "Install manually: npx skills add mdevaraju-architect/skillforge --skill fsc-claims-process --agent claude-code -y"
+    warn "Install manually: npx skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent claude-code -y"
   fi
 fi
 
