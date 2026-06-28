@@ -58,9 +58,10 @@ Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI c
 | Skill | Status | Description |
 |---|---|---|
 | `industries/fsc/claims-process` | ✅ v1.0 | End-to-end claims lifecycle — FNOL, adjudication, fraud/STP, reserves, payments |
-| `industries/fsc/policy-administration` | 🚧 Planned | InsurancePolicy lifecycle, underwriting, endorsements, renewals |
-| `industries/fsc/wealth-management` | 🚧 Planned | FinancialAccount, goals, referrals, AUM, advisor workflows |
-| `industries/fsc/mortgage-origination` | 🚧 Planned | Loan application, underwriting, closing, servicing |
+| `industries/fsc/policy-administration` | ✅ v1.0 | InsurancePolicy lifecycle, endorsements, renewals, cancellations, coverage, participants |
+| `industries/fsc/wealth-management` | ✅ v1.0 | FinancialAccount, household model, holdings, goals, plans, FINRA compliance |
+| `industries/fsc/mortgage-origination` | ✅ v1.0 | URLA/1003 intake, underwriting, HMDA/TRID/RESPA compliance, LOS integration, closing |
+| `industries/fsc/producer-hierarchy` | ✅ v1.0 | Multi-tier distribution (DST/RTF/CRP/Agent), ProducerRelationship, PPA, commissions, licensing |
 
 ### Health Cloud
 
@@ -94,7 +95,7 @@ Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI c
 
 | Skill | Status | Description |
 |---|---|---|
-| `agentforce/agent-design-patterns` | 🚧 Planned | Topic design, action architecture, guardrail patterns |
+| `agentforce/agent-design-patterns` | ✅ v1.0 | Topic design, action architecture, guardrail patterns, testing and evaluation |
 | `agentforce/topic-and-action-design` | 🚧 Planned | Topic instructions, action types, context management |
 | `agentforce/prompt-template-authoring` | 🚧 Planned | Flex templates, merge fields, grounding strategies |
 | `agentforce/evaluation-and-testing` | 🚧 Planned | AiEvaluationDefinition, test specs, CI integration |
