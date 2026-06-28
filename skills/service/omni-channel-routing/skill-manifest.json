@@ -1,22 +1,23 @@
 {
   "name": "service-omni-channel-routing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "service",
   "capability": "omni-channel-routing",
-  "description": "Omni-Channel, unified routing, ServiceChannel, RoutingConfiguration, skills-based routing, queue, capacity model",
+  "description": "Service Cloud OmniChannel routing — ServiceChannel, RoutingConfiguration, AgentWork, skills-based routing, presence management, and supervisor monitoring",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["OmniChannel"],
+  "boundary": [
+    "Voice/CTI telephony integration",
+    "Digital Engagement chat widget UI configuration",
+    "Case lifecycle — use service-case-lifecycle",
+    "Field Service scheduling — use service-field-service"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

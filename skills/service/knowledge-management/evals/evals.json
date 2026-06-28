@@ -1,0 +1,335 @@
+{
+  "skill": "service-knowledge-management",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "eval-001",
+      "description": "PublishStatus value is 'Online' not 'Published'",
+      "prompt": "How do I publish a Knowledge article in Apex? I want to set it to 'Published' status.",
+      "expected_topics": [
+        "PublishStatus = 'Online'",
+        "INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST if 'Published' is used",
+        "correct picklist value is Online not Published"
+      ],
+      "must_contain": [
+        "Online",
+        "PublishStatus"
+      ],
+      "must_not_contain": [
+        "PublishStatus = 'Published'",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "exact_value_gotcha"
+    },
+    {
+      "id": "eval-002",
+      "description": "Lightning Knowledge uses a single Knowledge object with Record Types — not separate kav SObjects per article type",
+      "prompt": "We're migrating from Classic Knowledge. In Classic we had FAQ__kav and HowTo__kav objects. What do we use in Lightning Knowledge instead?",
+      "expected_topics": [
+        "single Knowledge__kav object",
+        "Record Types on Knowledge__kav differentiate article types",
+        "Classic article type SObjects do not exist in Lightning Knowledge",
+        "FAQ and HowTo become Record Types"
+      ],
+      "must_contain": [
+        "Knowledge__kav",
+        "Record Type"
+      ],
+      "must_not_contain": [
+        "FAQ__kav",
+        "HowTo__kav",
+        "separate SObject per article type",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "architecture_understanding"
+    },
+    {
+      "id": "eval-003",
+      "description": "Editing a published article creates a new version — KnowledgeArticleId is shared, Id is unique per version",
+      "prompt": "If I edit an article that's already published, what happens to the existing version? Do I get a new ID?",
+      "expected_topics": [
+        "new Knowledge__kav row created with new Id and incremented VersionNumber",
+        "existing Online version stays live until new version is published",
+        "KnowledgeArticleId is shared across all versions",
+        "version Id changes — use KnowledgeArticleId as stable external reference"
+      ],
+      "must_contain": [
+        "KnowledgeArticleId",
+        "VersionNumber",
+        "new version"
+      ],
+      "must_not_contain": [
+        "KnowledgeArticleId changes",
+        "article is replaced in place",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "version_model_understanding"
+    },
+    {
+      "id": "eval-004",
+      "description": "DataCategoryGroupAssignment is required for article visibility in search and case deflection",
+      "prompt": "My published article isn't showing up in the Knowledge sidebar or case deflection. It's published and IsVisibleInApp is true. What could be wrong?",
+      "expected_topics": [
+        "DataCategoryGroupAssignment is required",
+        "articles without a DataCategoryGroupAssignment are not visible in search and deflection",
+        "assign at least one data category to each published article",
+        "check DataCategoryGroupAssignment records for the article's KnowledgeArticleId"
+      ],
+      "must_contain": [
+        "DataCategoryGroupAssignment",
+        "data category"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "troubleshooting_accuracy"
+    },
+    {
+      "id": "eval-005",
+      "description": "DataCategoryGroup SobjectType must be set to KnowledgeArticle",
+      "prompt": "I created a DataCategoryGroup but it doesn't appear in the Knowledge article category selector. The group is active. What am I missing?",
+      "expected_topics": [
+        "DataCategoryGroup.SobjectType must be 'KnowledgeArticle'",
+        "a category group with SobjectType = 'Question' or 'Solution' will not appear in Knowledge",
+        "verify via SOQL: SELECT Name, SobjectType FROM DataCategoryGroup WHERE IsActive = true AND SobjectType = 'KnowledgeArticle'"
+      ],
+      "must_contain": [
+        "SobjectType",
+        "KnowledgeArticle"
+      ],
+      "must_not_contain": [
+        "SobjectType = 'Question'",
+        "SobjectType = 'Solution'",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "configuration_diagnosis"
+    },
+    {
+      "id": "eval-006",
+      "description": "Channel visibility requires both the IsVisible* flag AND PublishStatus = Online",
+      "prompt": "I set IsVisibleInPkb = true on a Draft article. Will it now show up on the Public Knowledge Base?",
+      "expected_topics": [
+        "No — both conditions must be true simultaneously",
+        "IsVisibleInPkb = true AND PublishStatus = Online are both required",
+        "a Draft article with IsVisibleInPkb = true is still not visible",
+        "publish the article first"
+      ],
+      "must_contain": [
+        "PublishStatus",
+        "Online",
+        "IsVisibleInPkb"
+      ],
+      "must_not_contain": [
+        "IsVisibleInPkb alone is sufficient",
+        "Draft articles are visible",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "visibility_rules_accuracy"
+    },
+    {
+      "id": "eval-007",
+      "description": "SOSL is required for Knowledge full-text search — SOQL LIKE is not available on body fields",
+      "prompt": "How do I search for Knowledge articles that contain the word 'password' in the body content? Can I use SOQL LIKE?",
+      "expected_topics": [
+        "SOSL FIND is required for full-text search on Knowledge body fields",
+        "SOQL LIKE is not supported on rich-text (RichTextArea) body fields",
+        "FIND 'password' IN ALL FIELDS RETURNING Knowledge__kav",
+        "body fields are not filterable in SOQL"
+      ],
+      "must_contain": [
+        "SOSL",
+        "FIND",
+        "RETURNING Knowledge__kav"
+      ],
+      "must_not_contain": [
+        "WHERE Body__c LIKE",
+        "SOQL LIKE on body fields",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "query_correctness"
+    },
+    {
+      "id": "eval-008",
+      "description": "KnowledgeArticleViewStat and KnowledgeArticleVoteStat are read-only — DML is not allowed",
+      "prompt": "Can I insert records into KnowledgeArticleViewStat to seed view count data for testing?",
+      "expected_topics": [
+        "KnowledgeArticleViewStat is read-only — DML not allowed",
+        "OPERATION_NOT_ALLOWED error if you attempt insert/update/delete",
+        "view stats are auto-populated by the platform",
+        "use query only for reporting and analytics"
+      ],
+      "must_contain": [
+        "read-only",
+        "cannot insert",
+        "KnowledgeArticleViewStat"
+      ],
+      "must_not_contain": [
+        "you can insert",
+        "DML is supported",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "dml_restriction_accuracy"
+    },
+    {
+      "id": "eval-009",
+      "description": "Archiving an article does NOT delete it — archived articles are retained and queryable",
+      "prompt": "I archived a bunch of Knowledge articles. Are they gone from the system now?",
+      "expected_topics": [
+        "Archived articles are NOT deleted",
+        "PublishStatus = 'Archived' removes from search results but retains the record",
+        "archived articles can be queried: WHERE PublishStatus = 'Archived'",
+        "archived articles can be restored to Draft",
+        "deleted articles go to the Recycle Bin and have IsDeleted = true"
+      ],
+      "must_contain": [
+        "Archived",
+        "not deleted",
+        "retained"
+      ],
+      "must_not_contain": [
+        "archive deletes",
+        "archive removes the record",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "archive_vs_delete_distinction"
+    },
+    {
+      "id": "eval-010",
+      "description": "Summary field (255 chars) is the search snippet and should always be populated",
+      "prompt": "What field controls the preview text shown for a Knowledge article in search results and the case deflection panel?",
+      "expected_topics": [
+        "Summary field (Knowledge__kav.Summary)",
+        "255 character maximum",
+        "Summary is used as the search snippet in SOSL results",
+        "Summary appears in Suggested Articles panels",
+        "articles without Summary show only the Title in search results"
+      ],
+      "must_contain": [
+        "Summary",
+        "Knowledge__kav.Summary"
+      ],
+      "must_not_contain": [
+        "Description",
+        "Body__c is the snippet",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "field_identification_accuracy"
+    },
+    {
+      "id": "eval-011",
+      "description": "Translation Workbench must be enabled to create or import translated article versions",
+      "prompt": "We want to import French translations of our English Knowledge articles via Data Loader. What needs to be set up first?",
+      "expected_topics": [
+        "Translation Workbench must be enabled in Setup",
+        "French (fr) must be added as a supported language",
+        "translated articles share the same KnowledgeArticleId as the source language article",
+        "without Translation Workbench, importing articles with Language != default language throws FIELD_INTEGRITY_EXCEPTION"
+      ],
+      "must_contain": [
+        "Translation Workbench",
+        "Language",
+        "KnowledgeArticleId"
+      ],
+      "must_not_contain": [
+        "no setup required",
+        "Data Loader works without Translation Workbench",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "prerequisite_identification"
+    },
+    {
+      "id": "eval-012",
+      "description": "CaseArticle junction object is the correct way to attach articles to cases — not Case.KnowledgeArticleId",
+      "prompt": "What is the correct way to programmatically link a Knowledge article to a Case record to track which articles helped resolve the case?",
+      "expected_topics": [
+        "CaseArticle junction object",
+        "CaseArticle.CaseId and CaseArticle.KnowledgeArticleId",
+        "use KnowledgeArticleId (master ID) not the version Id",
+        "CaseArticle tracks article-to-case attachment for analytics",
+        "Case.KnowledgeArticleId is a legacy field — do not use"
+      ],
+      "must_contain": [
+        "CaseArticle",
+        "KnowledgeArticleId"
+      ],
+      "must_not_contain": [
+        "Case.KnowledgeArticleId is the recommended approach",
+        "update the Case record directly",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "AgentWork",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "scoring": "junction_object_pattern_accuracy"
+    }
+  ]
+}

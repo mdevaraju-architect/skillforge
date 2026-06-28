@@ -1,22 +1,24 @@
 {
   "name": "sales-opportunity-to-close",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "sales",
   "capability": "opportunity-to-close",
-  "description": "Opportunity, OpportunityStage, ForecastCategory, close plan, CPQ handoff, SBQQ, win rate, pipeline",
+  "description": "Sales Cloud opportunity lifecycle — stage management, products, quotes, pipeline reporting, and CPQ handoff",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["SalesCloud"],
+  "boundary": [
+    "Revenue Cloud pricing engine — use sales-revenue-cloud",
+    "Collaborative Forecasting — use sales-forecasting",
+    "Territory Management — use sales-territory-management",
+    "Service Cloud Cases — use service-case-lifecycle",
+    "CPQ/SBQQ deep configuration"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

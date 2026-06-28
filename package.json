@@ -38,6 +38,54 @@
       "path": "skills/agentforce/agent-design-patterns/SKILL.md",
       "domain": "agentforce",
       "approval-tier": "draft"
+    },
+    {
+      "name": "sales-opportunity-to-close",
+      "path": "skills/sales/opportunity-to-close/SKILL.md",
+      "domain": "sales",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "sales-revenue-cloud",
+      "path": "skills/sales/revenue-cloud/SKILL.md",
+      "domain": "sales",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "sales-forecasting",
+      "path": "skills/sales/forecasting/SKILL.md",
+      "domain": "sales",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "sales-territory-management",
+      "path": "skills/sales/territory-management/SKILL.md",
+      "domain": "sales",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "service-case-lifecycle",
+      "path": "skills/service/case-lifecycle/SKILL.md",
+      "domain": "service",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "service-omni-channel-routing",
+      "path": "skills/service/omni-channel-routing/SKILL.md",
+      "domain": "service",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "service-knowledge-management",
+      "path": "skills/service/knowledge-management/SKILL.md",
+      "domain": "service",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "service-field-service",
+      "path": "skills/service/field-service/SKILL.md",
+      "domain": "service",
+      "approval-tier": "draft"
     }
   ],
   "keywords": [

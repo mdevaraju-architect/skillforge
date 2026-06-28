@@ -1,0 +1,313 @@
+{
+  "skill": "service-case-lifecycle",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "eval-001",
+      "title": "Status transition not enforced — need validation rule",
+      "prompt": "An agent closed a case without filling in any resolution notes. The case jumped from New straight to Closed. How do I prevent this?",
+      "expected_topics": [
+        "Case.Status picklist transitions are not platform-enforced",
+        "validation rule with ISPICKVAL(Status, 'Closed') and ISBLANK(Resolution__c)",
+        "Lightning Path for guided transitions",
+        "Status Category distinction"
+      ],
+      "must_contain": [
+        "validation rule",
+        "Resolution__c",
+        "Status"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-002",
+      "title": "CaseMilestone auto-created by entitlement process — do not insert manually",
+      "prompt": "I wrote an Apex trigger that inserts CaseMilestone records when a case is created, but I'm getting INSUFFICIENT_ACCESS_OR_READONLY errors. What's wrong?",
+      "expected_topics": [
+        "CaseMilestone records are auto-created by the Entitlement Process",
+        "do not manually insert CaseMilestone",
+        "set Case.EntitlementId to trigger auto-creation",
+        "update CompletionDate to complete a milestone"
+      ],
+      "must_contain": [
+        "CaseMilestone",
+        "EntitlementId",
+        "auto-created",
+        "CompletionDate"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-003",
+      "title": "EntitlementId required for SLA milestone creation",
+      "prompt": "We set up an Entitlement Process with First Response and Resolution milestones, but no CaseMilestone records are being created on new cases. What configuration is missing?",
+      "expected_topics": [
+        "Case.EntitlementId must be populated",
+        "SlaProcess must be active and linked to the entitlement",
+        "auto-entitlement lookup via Flow or Setup setting",
+        "entry criteria on the SlaProcess"
+      ],
+      "must_contain": [
+        "EntitlementId",
+        "Case.EntitlementId",
+        "SlaProcess"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-004",
+      "title": "EscalationRule fires on case age not status change",
+      "prompt": "I set up an escalation rule but it's escalating cases that are already being worked on. I expected escalation to only happen if the status hasn't moved to Working. Why is it still firing?",
+      "expected_topics": [
+        "EscalationRule evaluates elapsed time from CreatedDate, not status transitions",
+        "Case.IsEscalated is set by rule engine based on age threshold",
+        "add status-based criteria to EscalationRuleItem to exclude Working cases",
+        "business hours affect elapsed time calculation"
+      ],
+      "must_contain": [
+        "EscalationRule",
+        "case age",
+        "CreatedDate",
+        "IsEscalated"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-005",
+      "title": "CaseComment.IsPublished customer visibility",
+      "prompt": "A support agent added an internal note on a case with some sensitive internal pricing information. It appeared on the customer portal. How did this happen and how do I prevent it?",
+      "expected_topics": [
+        "CaseComment.IsPublished = true makes comments visible on the customer portal",
+        "IsPublished defaults to false",
+        "bulk DML operations may accidentally set IsPublished = true",
+        "review automation and data loads that create CaseComment records"
+      ],
+      "must_contain": [
+        "CaseComment",
+        "IsPublished",
+        "portal"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-006",
+      "title": "EmailMessage ThreadIdentifier threading — new case created instead of reply",
+      "prompt": "Customers are replying to our support emails but instead of updating the existing case, Salesforce is creating duplicate new cases for each reply. How does Email-to-Case threading work and what can cause it to break?",
+      "expected_topics": [
+        "ThreadIdentifier embedded in email subject and footer",
+        "token stripped by customer's mail client breaks threading",
+        "EmailMessage.Incoming = true for inbound messages",
+        "duplicate case detection and mitigation"
+      ],
+      "must_contain": [
+        "ThreadIdentifier",
+        "EmailMessage",
+        "Incoming",
+        "threading"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-007",
+      "title": "Case.Origin importance for routing and SLA",
+      "prompt": "A team member changed Case.Origin on a set of existing cases from Email to Phone after they were created. Now the SLA metrics look wrong. Is changing Origin after creation safe?",
+      "expected_topics": [
+        "Case.Origin drives assignment rules and entitlement process entry criteria",
+        "changing Origin after creation does not retroactively re-apply assignment or SLA",
+        "entitlement process entry criteria may branch on Origin",
+        "set Origin correctly at intake"
+      ],
+      "must_contain": [
+        "Case.Origin",
+        "SLA",
+        "assignment rule",
+        "entitlement process"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-008",
+      "title": "ServiceContract vs Entitlement distinction",
+      "prompt": "A customer has a premium support contract covering three product lines with different response times for each. Should I create one Entitlement or multiple? What's the relationship between ServiceContract and Entitlement?",
+      "expected_topics": [
+        "ServiceContract is the commercial agreement; Entitlement defines specific coverage",
+        "one ServiceContract can have multiple Entitlement children via ServiceContractId",
+        "separate Entitlement per product line or SLA tier",
+        "each Entitlement links to its own SlaProcess"
+      ],
+      "must_contain": [
+        "ServiceContract",
+        "Entitlement",
+        "ServiceContractId",
+        "SlaProcess"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-009",
+      "title": "IsClosed is formula — set Status to close a case",
+      "prompt": "I'm writing an Apex class to close cases in bulk. I tried setting case.IsClosed = true but it won't compile. What's the correct way to close a case via Apex?",
+      "expected_topics": [
+        "IsClosed is a formula field — cannot be set via DML",
+        "set case.Status to a value whose Status Category is Closed",
+        "compile error when attempting to write IsClosed directly",
+        "re-open by setting Status to an Open category value"
+      ],
+      "must_contain": [
+        "IsClosed",
+        "formula",
+        "Status",
+        "Status Category"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-010",
+      "title": "AssignmentRuleItem child records required for rule to work",
+      "prompt": "I created a Case Assignment Rule and marked it active, but cases are all going to the default owner instead of being routed to the correct queues. The rule looks configured correctly in the UI. What should I check?",
+      "expected_topics": [
+        "CaseAssignmentRule is the container; routing criteria live on child AssignmentRuleItem records",
+        "rule with no AssignmentRuleItem records routes to default owner",
+        "query AssignmentRuleItem to verify criteria exist",
+        "AssignmentRuleHeader must be set in Apex DML options"
+      ],
+      "must_contain": [
+        "AssignmentRuleItem",
+        "CaseAssignmentRule",
+        "criteria"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-011",
+      "title": "Web-to-Case assignment rule activation",
+      "prompt": "Our assignment rules route cases perfectly when created manually in Salesforce, but cases submitted through our web form all go to the default owner. What setting controls this?",
+      "expected_topics": [
+        "Web-to-Case bypasses assignment rules unless explicitly enabled",
+        "Setup > Service > Web-to-Case > Assign Cases to Case Assignment Rules checkbox",
+        "Email-to-Case routing address sets queue directly per routing address",
+        "validate channel settings after any assignment rule change"
+      ],
+      "must_contain": [
+        "Web-to-Case",
+        "assignment rule",
+        "Assign Cases to Case Assignment Rules"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    },
+    {
+      "id": "eval-012",
+      "title": "Case merge irreversibility",
+      "prompt": "We accidentally merged the wrong two cases together. The non-master case is now read-only and the customer history is on the wrong master case. Can we undo the merge?",
+      "expected_topics": [
+        "case merge is irreversible — no unmerge via UI or API",
+        "MasterRecordId is set on child cases and cannot be cleared",
+        "CaseComment and EmailMessage are re-parented to master case",
+        "validate merge candidates carefully; no undo path"
+      ],
+      "must_contain": [
+        "MasterRecordId",
+        "irreversible",
+        "merge",
+        "read-only"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "OpportunityLineItem",
+        "WorkOrder",
+        "Territory2",
+        "ForecastingItem"
+      ]
+    }
+  ]
+}

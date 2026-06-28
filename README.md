@@ -39,19 +39,19 @@ Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI c
 
 | Skill | Status | Description |
 |---|---|---|
-| `sales/opportunity-to-close` | 🚧 Planned | Opportunity stages, forecasting, close plans, CPQ handoff |
-| `sales/revenue-cloud` | 🚧 Planned | New-core Revenue Cloud PCM, pricing, transaction management |
-| `sales/forecasting` | 🚧 Planned | Collaborative forecasting, territory hierarchies, overlays |
-| `sales/territory-management` | 🚧 Planned | Enterprise Territory Management, assignment rules |
+| `sales/opportunity-to-close` | ✅ v1.0 | Opportunity stages, forecasting, close plans, CPQ handoff |
+| `sales/revenue-cloud` | ✅ v1.0 | New-core Revenue Cloud PCM, pricing, transaction management |
+| `sales/forecasting` | ✅ v1.0 | Collaborative forecasting, territory hierarchies, overlays |
+| `sales/territory-management` | ✅ v1.0 | Enterprise Territory Management, assignment rules |
 
 ### Service Cloud
 
 | Skill | Status | Description |
 |---|---|---|
-| `service/case-lifecycle` | 🚧 Planned | Case creation, routing, escalation, SLAs, entitlements |
-| `service/omni-channel-routing` | 🚧 Planned | Unified routing, skills-based routing, queues, capacity |
-| `service/knowledge-management` | 🚧 Planned | Knowledge articles, search, Lightning Knowledge migration |
-| `service/field-service` | 🚧 Planned | Work orders, service appointments, dispatcher console |
+| `service/case-lifecycle` | ✅ v1.0 | Case creation, routing, escalation, SLAs, entitlements |
+| `service/omni-channel-routing` | ✅ v1.0 | Unified routing, skills-based routing, queues, capacity |
+| `service/knowledge-management` | ✅ v1.0 | Knowledge articles, search, Lightning Knowledge migration |
+| `service/field-service` | ✅ v1.0 | Work orders, service appointments, dispatcher console |
 
 ### Financial Services Cloud (FSC)
 

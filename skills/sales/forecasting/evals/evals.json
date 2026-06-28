@@ -1,0 +1,251 @@
+{
+  "skill": "sales-forecasting",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "sf-forecast-001",
+      "topic": "ForecastingItem read-only DML constraint",
+      "prompt": "I want to update ForecastingItem records directly in Apex to correct forecast amounts for a few reps. Can I just use a standard DML update statement?",
+      "expected_concepts": [
+        "ForecastingItem is read-only",
+        "DML on ForecastingItem throws INSUFFICIENT_ACCESS_OR_READONLY",
+        "Use ForecastingOwnerAdjustment or ForecastingManagerAdjustment instead",
+        "Modify Opportunity fields to influence ForecastingItem values"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must clearly state ForecastingItem cannot be inserted or updated via DML, explain the correct alternatives (adjustments or Opportunity field updates), and not suggest any DML workaround on ForecastingItem."
+    },
+    {
+      "id": "sf-forecast-002",
+      "topic": "ForecastAmount vs OwnerOnlyAmount vs AdjustedAmount — double-count risk",
+      "prompt": "I need to build a report showing total forecasted revenue across all reps in my org for Q3. I wrote a SOQL query that sums ForecastAmount across all ForecastingItem rows for the period. The number is way too high. What am I doing wrong?",
+      "expected_concepts": [
+        "ForecastAmount includes rolled-up subordinate amounts",
+        "Summing ForecastAmount across hierarchy double-counts",
+        "Use OwnerOnlyAmount filtered to leaf-node users instead",
+        "Parent rows already include all children"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must explain the hierarchy double-counting problem, state that ForecastAmount already includes children, and direct the user to sum OwnerOnlyAmount at leaf nodes instead."
+    },
+    {
+      "id": "sf-forecast-003",
+      "topic": "ForecastingType determines the rollup measure",
+      "prompt": "We have two active ForecastingTypes — Revenue and Quantity. When I query ForecastingItem without filtering by ForecastingTypeId, I get doubled rows for the same user and period. Why?",
+      "expected_concepts": [
+        "Each ForecastingType generates its own ForecastingItem tree",
+        "Must always filter ForecastingItem by ForecastingTypeId",
+        "Revenue and Quantity types produce separate rows for the same user and period",
+        "Mixing types without filtering produces incorrect aggregates"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must explain that each active ForecastingType produces its own independent set of ForecastingItem records and that ForecastingTypeId is a required filter for accurate queries."
+    },
+    {
+      "id": "sf-forecast-004",
+      "topic": "ForecastingQuota matching logic — no lookup field",
+      "prompt": "I'm trying to write a report that shows each rep's quota next to their closed amount. I looked at ForecastingQuota and ForecastingItem but I can't find a ForecastingItemId field on ForecastingQuota. How do I join these two objects?",
+      "expected_concepts": [
+        "ForecastingQuota has no lookup to ForecastingItem",
+        "Join on StartDate + ForecastingTypeId + QuotaOwnerId = OwnerId",
+        "Two-query approach in Apex",
+        "Joined report or external BI tool for UI reporting"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must confirm there is no ForecastingItemId field on ForecastingQuota, explain the three-field join key (StartDate, ForecastingTypeId, QuotaOwnerId/OwnerId), and provide a workable approach for building the join."
+    },
+    {
+      "id": "sf-forecast-005",
+      "topic": "Overlay splits via OpportunitySplit",
+      "prompt": "We want overlay reps (solutions engineers) to see their credited share of deals in the Forecasts tab. Overlay splits don't need to sum to 100%. What objects and settings do I need to configure?",
+      "expected_concepts": [
+        "Enable Opportunity Splits in Setup",
+        "Create OpportunitySplitType with IsTotalValidated = false for overlay",
+        "Overlay split percentages are additive — do not need to sum to 100%",
+        "Create an overlay ForecastingType linked to the overlay split type",
+        "Add OpportunitySplit records with SplitOwnerId for each overlay rep"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must cover both Opportunity Splits enablement AND the overlay ForecastingType configuration. Must note that overlay splits are additive (IsTotalValidated = false) and do not need to sum to 100%."
+    },
+    {
+      "id": "sf-forecast-006",
+      "topic": "Territory vs role hierarchy forecast setting",
+      "prompt": "We use Enterprise Territory Management and want forecast rollups to follow our territory hierarchy rather than the role hierarchy. How do we configure this?",
+      "expected_concepts": [
+        "ForecastingType.ForecastingHierarchyType = RoleTerritory2 for territory-based",
+        "Enterprise Territory Management must be enabled",
+        "Users must be assigned to Territory2 records via UserTerritory2Association",
+        "Separate ForecastingType needed for territory forecast vs role forecast",
+        "Territory2Model must be in Active state"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must specify ForecastingHierarchyType = RoleTerritory2, note the Enterprise Territory Management prerequisite, and explain that user-to-territory assignment via UserTerritory2Association is required."
+    },
+    {
+      "id": "sf-forecast-007",
+      "topic": "ForecastingSubmission snapshot behavior",
+      "prompt": "A manager submitted their Q3 forecast last week. Since then, two deals closed. The submitted forecast still shows lower numbers. Is this a bug, and how should I advise the manager?",
+      "expected_concepts": [
+        "ForecastingSubmission is a point-in-time snapshot",
+        "Opportunity changes after submission do not update the submitted forecast",
+        "Live ForecastingItem updates reflect the closed deals",
+        "Manager can create a new ForecastingSubmission to capture the latest snapshot",
+        "This is expected behavior, not a bug"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must explain that ForecastingSubmission is a static snapshot, that post-submission opportunity changes only affect live ForecastingItem data, and that a new submission is needed to capture the updated numbers."
+    },
+    {
+      "id": "sf-forecast-008",
+      "topic": "Product family ForecastingType requires OpportunityLineItem records",
+      "prompt": "We enabled a Product Family forecast type and most of our reps have $0 in their product family forecast, even though they have open opportunities. What's wrong?",
+      "expected_concepts": [
+        "Product family forecast excludes opportunities without OpportunityLineItem records",
+        "Only opportunities with products (OLIs) appear in product family forecast",
+        "Opportunities without line items are silently excluded",
+        "Products must have Product2.Family populated"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must identify that opportunities without OpportunityLineItem records are excluded from product family forecasts entirely, and direct the user to check whether their opportunities have products added."
+    },
+    {
+      "id": "sf-forecast-009",
+      "topic": "Custom forecast type field configuration",
+      "prompt": "We want to build a forecast that rolls up our custom ARR__c field on Opportunity instead of the standard Amount field. Is this supported, and how do we set it up?",
+      "expected_concepts": [
+        "Custom ForecastingType can roll up a custom Opportunity field",
+        "Field must be Currency or Number type",
+        "Set ForecastedAmountFieldApiName to ARR__c",
+        "Rollup recalculation is asynchronous — up to 24 hours",
+        "Configure via Setup → Forecast Settings → Forecast Types"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must confirm this is supported, specify the field type requirement (Currency or Number), explain how ForecastedAmountFieldApiName is configured, and note the asynchronous recalculation delay."
+    },
+    {
+      "id": "sf-forecast-010",
+      "topic": "Period granularity change consequences",
+      "prompt": "Our sales ops team wants to switch our Revenue forecast type from Monthly to Quarterly. What risks should I communicate before they make this change?",
+      "expected_concepts": [
+        "Changing period type deletes all monthly ForecastingItem records",
+        "All ForecastingOwnerAdjustment and ForecastingManagerAdjustment records for monthly periods are deleted",
+        "Deletion is not reversible",
+        "New quarterly records are regenerated from Opportunity data",
+        "Export adjustment data before making the change"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must clearly call out that the period type change is destructive and irreversible, that all existing adjustment records for the old period granularity are deleted, and recommend backing up adjustment data first."
+    },
+    {
+      "id": "sf-forecast-011",
+      "topic": "ForecastingOwnerAdjustment vs ForecastingManagerAdjustment",
+      "prompt": "A manager wants to reduce one of their rep's Commit number in the forecast because a deal is going to slip. Which object should the manager use to make this adjustment, and can they use ForecastingOwnerAdjustment on behalf of the rep?",
+      "expected_concepts": [
+        "Manager must use ForecastingManagerAdjustment — not ForecastingOwnerAdjustment",
+        "ForecastingOwnerAdjustment can only be created by the opportunity owner on their own row",
+        "ForecastingManagerAdjustment.OwnerId = manager's User ID",
+        "ForecastingManagerAdjustment.ForecastingItemId = the rep's ForecastingItem row"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must clearly distinguish the two objects, state that the manager must use ForecastingManagerAdjustment, and explicitly confirm that a manager cannot create ForecastingOwnerAdjustment on behalf of a report."
+    },
+    {
+      "id": "sf-forecast-012",
+      "topic": "Cumulative forecast view vs standard view",
+      "prompt": "The Forecasts tab has a 'Cumulative' toggle. Does toggling it change the underlying ForecastingItem values? And if I want to report cumulative YTD closed revenue in SOQL, is there a single field I can query?",
+      "expected_concepts": [
+        "Cumulative toggle only changes the UI display — does not change ForecastingItem values",
+        "No single field stores YTD or cumulative amounts on ForecastingItem",
+        "Must SUM OwnerOnlyAmount across multiple StartDate values in SOQL",
+        "ForecastingDisplayedFamily also affects UI display only"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem"
+      ],
+      "rubric": "Response must clarify that the cumulative toggle is a UI-only feature, confirm there is no stored cumulative field, and provide or describe a SOQL approach using SUM(OwnerOnlyAmount) across a date range."
+    }
+  ]
+}

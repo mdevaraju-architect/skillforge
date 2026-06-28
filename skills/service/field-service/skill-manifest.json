@@ -1,22 +1,25 @@
 {
   "name": "service-field-service",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "service",
   "capability": "field-service",
-  "description": "Work Order, ServiceAppointment, ServiceResource, DispatcherConsole, FSL, territory, scheduling policy, technician",
+  "description": "Salesforce Field Service (FSL) — WorkOrder, ServiceAppointment, service territories, resource management, skills-based scheduling, and dispatcher console",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["FieldService"],
+  "boundary": [
+    "FSL optimization engine deep configuration and scheduling policies",
+    "Mobile App customization and offline sync",
+    "IoT-triggered work orders and asset management",
+    "Preventive maintenance plans",
+    "Case lifecycle — use service-case-lifecycle",
+    "OmniChannel routing — use service-omni-channel-routing"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

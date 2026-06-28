@@ -1,0 +1,213 @@
+{
+  "skill": "sales-revenue-cloud",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "rc-001",
+      "description": "ProductCatalog status requirement for configurator visibility",
+      "prompt": "My products are set up correctly with categories and pricebook entries, but they don't appear in the product configurator when I try to add them to a transaction. What should I check first?",
+      "must_contain": [
+        "ProductCatalog",
+        "Status",
+        "Active"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "OpportunityLineItem"
+      ],
+      "notes": "Response must identify ProductCatalog.Status = Active as the first check, not assume a permission or pricebook issue."
+    },
+    {
+      "id": "rc-002",
+      "description": "Product2 + ProductClassification relationship for attribute configurability",
+      "prompt": "I created a Product2 record with several AttributeDefinition records but the configurator shows no attribute inputs for the product. What is the missing link?",
+      "must_contain": [
+        "ProductClassification",
+        "ProductClassificationId",
+        "ProductClassificationAttribute"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "OpportunityLineItem",
+        "FinancialAccount"
+      ],
+      "notes": "Must identify that Product2.ProductClassificationId is not set, and that ProductClassificationAttribute junctions are required to link attributes to the classification."
+    },
+    {
+      "id": "rc-003",
+      "description": "TransactionLineItem vs OrderItem — correct object for new-core Revenue Cloud",
+      "prompt": "I need to query all line items on a customer's revenue cloud order. Which object should I query?",
+      "must_contain": [
+        "TransactionLineItem",
+        "TransactionId"
+      ],
+      "must_not_contain": [
+        "OrderItem",
+        "SBQQ__",
+        "OpportunityLineItem",
+        "InsurancePolicy",
+        "FinancialAccount"
+      ],
+      "notes": "Must direct to TransactionLineItem, not OrderItem. OrderItem belongs to the legacy OMS."
+    },
+    {
+      "id": "rc-004",
+      "description": "PriceAdjustmentSchedule AdjustmentType picklist values and value semantics",
+      "prompt": "I set up a PriceAdjustmentSchedule with AdjustmentValue = 15. Sometimes customers get 15% off and sometimes $15 off. What controls which behavior applies?",
+      "must_contain": [
+        "AdjustmentType",
+        "PercentageDiscount",
+        "FixedDiscount"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "Case"
+      ],
+      "notes": "Must explain that AdjustmentType determines interpretation of AdjustmentValue. Must name the picklist values PercentageDiscount and FixedDiscount explicitly."
+    },
+    {
+      "id": "rc-005",
+      "description": "BillingSchedule auto-generation — do not create manually",
+      "prompt": "After activating a transaction with a monthly subscription product, should I create the BillingSchedule records myself or does the platform handle that?",
+      "must_contain": [
+        "BillingSchedule",
+        "auto",
+        "Activated"
+      ],
+      "must_not_contain": [
+        "manually",
+        "insert BillingSchedule",
+        "SBQQ__",
+        "OrderItem"
+      ],
+      "notes": "Must state that BillingSchedule records are auto-generated on transaction activation. Must warn against manual creation."
+    },
+    {
+      "id": "rc-006",
+      "description": "Bundle parent-child via ParentTransactionLineItemId — totals from children",
+      "prompt": "I have a bundle transaction with a parent product and three child components. When I read the parent TransactionLineItem.TotalAmount it shows $0 but the children have prices. Is this a bug?",
+      "must_contain": [
+        "ParentTransactionLineItemId",
+        "container",
+        "children"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "OpportunityLineItem",
+        "InsurancePolicy"
+      ],
+      "notes": "Must explain that container-only bundle parents are $0 by design and that bundle totals must be summed from child TLIs."
+    },
+    {
+      "id": "rc-007",
+      "description": "AttributeDefinition DataType = Picklist requires AttributePicklistValue records",
+      "prompt": "I created a Picklist-type AttributeDefinition but the dropdown in the configurator is empty. What did I miss?",
+      "must_contain": [
+        "AttributePicklistValue",
+        "AttributeDefinitionId"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Case"
+      ],
+      "notes": "Must identify the missing AttributePicklistValue records as the cause."
+    },
+    {
+      "id": "rc-008",
+      "description": "Amendment vs edit-in-place — original transaction is immutable post-activation",
+      "prompt": "A customer wants to add 10 seats to their active subscription. Can I just update the Quantity on the original TransactionLineItem?",
+      "must_contain": [
+        "Amendment",
+        "AmendedTransactionId",
+        "immutable"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "update the original",
+        "InsurancePolicy"
+      ],
+      "notes": "Must clearly state that activated TLIs are immutable and that an amendment transaction must be created instead."
+    },
+    {
+      "id": "rc-009",
+      "description": "RevenueTransaction ownership — RevRec engine only, no manual creation",
+      "prompt": "Can I insert RevenueTransaction records manually via Apex to backfill revenue recognition for migrated data?",
+      "must_contain": [
+        "RevenueTransaction",
+        "Revenue Recognition",
+        "engine"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "Case",
+        "yes, you can insert"
+      ],
+      "notes": "Must advise against manual RevenueTransaction creation. Must state the RevRec engine owns the object lifecycle."
+    },
+    {
+      "id": "rc-010",
+      "description": "PricebookEntry still required in new-core Revenue Cloud",
+      "prompt": "I'm using PriceAdjustmentSchedule to drive all my pricing. Do I still need to create PricebookEntry records for my products?",
+      "must_contain": [
+        "PricebookEntry",
+        "UnitPrice",
+        "required"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "no, you don't need"
+      ],
+      "notes": "Must confirm PricebookEntry is still required as the waterfall baseline, even when adjustment schedules drive the net price."
+    },
+    {
+      "id": "rc-011",
+      "description": "ProductClassification reuse risk — version, do not edit in place",
+      "prompt": "I want to add a new attribute to my ProductClassification. Can I just add it to the existing classification record?",
+      "must_contain": [
+        "ProductClassification",
+        "version",
+        "retroactively"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "Case"
+      ],
+      "notes": "Must warn that editing a live classification retroactively affects all products using it, and recommend versioning instead."
+    },
+    {
+      "id": "rc-012",
+      "description": "Pricing waterfall sequence — multiple schedules applied in Sequence order",
+      "prompt": "I have two PriceAdjustmentSchedule records on a PricebookEntry. How does the system decide which one to apply first?",
+      "must_contain": [
+        "Sequence",
+        "PriceAdjustmentSchedule.Sequence",
+        "waterfall"
+      ],
+      "must_not_contain": [
+        "SBQQ__",
+        "OrderItem",
+        "InsurancePolicy",
+        "OpportunityLineItem",
+        "FinancialAccount"
+      ],
+      "notes": "Must explain that PriceAdjustmentSchedule.Sequence controls application order, ascending. Must describe stacking behavior."
+    }
+  ]
+}

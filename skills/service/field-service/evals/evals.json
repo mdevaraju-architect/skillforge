@@ -1,0 +1,241 @@
+{
+  "skill": "service-field-service",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "fsl-eval-001",
+      "topic": "ServiceResource wraps User via RelatedRecordId",
+      "prompt": "A Salesforce admin created a new User for a field technician, assigned the Field Service Agent permission set, but the technician does not appear in the dispatcher console Gantt or receive any appointments. What is missing?",
+      "expected_keywords": [
+        "ServiceResource",
+        "RelatedRecordId",
+        "IsActive"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must identify that a ServiceResource record must be created linking to the User via RelatedRecordId, and that IsActive must be true. The User alone is not schedulable."
+    },
+    {
+      "id": "fsl-eval-002",
+      "topic": "ServiceAppointment is the schedulable unit, not WorkOrder",
+      "prompt": "A developer is building an integration that marks WorkOrders as Completed when a job is done but does not update any related records. A dispatcher notices the Gantt still shows open appointment blocks for completed jobs. What record is the integration missing?",
+      "expected_keywords": [
+        "ServiceAppointment",
+        "Status",
+        "Completed"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that ServiceAppointment (not WorkOrder) drives the Gantt, and ServiceAppointment.Status must be updated to Completed to clear the Gantt block."
+    },
+    {
+      "id": "fsl-eval-003",
+      "topic": "AssignedResource junction for resource assignment",
+      "prompt": "How should a developer assign a specific technician to a ServiceAppointment via Apex? Is there a direct field on ServiceAppointment for this, or is a separate object required?",
+      "expected_keywords": [
+        "AssignedResource",
+        "ServiceResourceId",
+        "ServiceAppointmentId"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that AssignedResource is the junction object. There is no direct resource lookup on ServiceAppointment — an AssignedResource record with ServiceAppointmentId and ServiceResourceId must be inserted."
+    },
+    {
+      "id": "fsl-eval-004",
+      "topic": "ServiceTerritoryMember junction for territory membership",
+      "prompt": "A resource is in the ServiceTerritory's city but does not appear in that territory's dispatcher console Gantt. The resource's ServiceResource record is active. What configuration step is missing?",
+      "expected_keywords": [
+        "ServiceTerritoryMember",
+        "TerritoryType",
+        "Primary"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must identify that ServiceTerritoryMember is the junction that assigns a ServiceResource to a ServiceTerritory, and that TerritoryType = P (Primary) is required for the resource to appear in the territory Gantt."
+    },
+    {
+      "id": "fsl-eval-005",
+      "topic": "SkillRequirement and ServiceResourceSkill for skill matching",
+      "prompt": "An org has WorkOrders with SkillRequirement records for 'Electrical Certification', but the scheduler is assigning technicians regardless of whether they have that skill. What must be checked on the technician records and the SchedulingPolicy?",
+      "expected_keywords": [
+        "ServiceResourceSkill",
+        "SkillRequirement",
+        "SchedulingPolicy",
+        "Match Skills"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that ServiceResourceSkill records must exist on each technician for the Skill, AND the SchedulingPolicy must have the Match Skills work rule enabled. Missing either causes skill matching to fail silently."
+    },
+    {
+      "id": "fsl-eval-006",
+      "topic": "ServiceAppointment status lifecycle order",
+      "prompt": "An integration closes field jobs by setting ServiceAppointment.Status directly to Completed without going through En Route or On Site. What data quality issue does this create?",
+      "expected_keywords": [
+        "travel time",
+        "ActualStartTime",
+        "En Route",
+        "On Site"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must identify that skipping En Route and On Site breaks travel time calculations. ActualStartTime is set when En Route is triggered and ActualEndTime when On Site or Completed is triggered — bypassing these leaves those fields null and corrupts travel time analytics."
+    },
+    {
+      "id": "fsl-eval-007",
+      "topic": "OperatingHours linked to ServiceTerritory for scheduling windows",
+      "prompt": "Appointments are being scheduled at 11:00 PM local time in a Chicago territory. The OperatingHours record is correctly set to 08:00-17:00 Monday-Friday. What configuration mistake could cause appointments to be scheduled outside business hours?",
+      "expected_keywords": [
+        "ServiceTerritory",
+        "OperatingHoursId",
+        "TimeZone"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must cover two possibilities: (1) ServiceTerritory.OperatingHoursId is not set (no link between territory and hours), causing the scheduler to have no window constraint; (2) OperatingHours.TimeZone is wrong (e.g., UTC instead of America/Chicago), causing the hours to appear correct in UTC but offset in local time."
+    },
+    {
+      "id": "fsl-eval-008",
+      "topic": "ResourceAbsence for blocking resources, not ServiceAppointment",
+      "prompt": "A team is modeling technician sick days by creating a placeholder ServiceAppointment called 'Sick Day Block' that fills their schedule. What problems does this workaround create, and what is the correct approach?",
+      "expected_keywords": [
+        "ResourceAbsence",
+        "AbsenceType",
+        "Gantt",
+        "capacity"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that ServiceAppointment records used as blocks inflate appointment counts, break capacity analytics, and create misleading Gantt entries. The correct approach is ResourceAbsence with the appropriate AbsenceType — the scheduler natively respects absence records as hard blocks."
+    },
+    {
+      "id": "fsl-eval-009",
+      "topic": "SchedulingPolicy governs optimizer behavior",
+      "prompt": "A company wants to switch from minimizing travel time to prioritizing SLA compliance for their field scheduling. They ask if they can change this in the org settings globally. What is the correct FSL mechanism, and what testing precaution should be taken?",
+      "expected_keywords": [
+        "SchedulingPolicy",
+        "Service Objective",
+        "SLA",
+        "sandbox"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that SchedulingPolicy controls optimizer objective weights (including SLA weight vs. minimize travel weight), that the policy is assigned per ServiceTerritory, and that policy changes should be tested in sandbox before production because they affect all future scheduling operations that reference that policy."
+    },
+    {
+      "id": "fsl-eval-010",
+      "topic": "DurationInMinutes required on ServiceAppointment",
+      "prompt": "A developer creates ServiceAppointment records from a WorkOrder integration but does not set DurationInMinutes. What symptoms will dispatchers see in the console, and what is the fix?",
+      "expected_keywords": [
+        "DurationInMinutes",
+        "Gantt",
+        "travel time",
+        "Duration"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that DurationInMinutes = 0 or null causes the appointment to appear as a zero-width block on the Gantt, travel time calculation fails, and the scheduler may produce incorrect results. The fix is to derive DurationInMinutes from WorkOrder.Duration (converting to minutes if DurationType = Hours) and set it on the ServiceAppointment."
+    },
+    {
+      "id": "fsl-eval-011",
+      "topic": "FSL permission sets separate from Service Cloud",
+      "prompt": "A customer service manager has the Service Cloud User permission set and can access Cases, but cannot see the dispatcher console Gantt or the FSL app. What permission sets are needed for FSL dispatcher access, and are they part of Service Cloud?",
+      "expected_keywords": [
+        "Field Service Dispatcher",
+        "Field Service Dispatcher Console User",
+        "permission set",
+        "managed package"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must clarify that Service Cloud User PS does not grant FSL access. FSL dispatcher console requires Field Service Dispatcher and Field Service Dispatcher Console User permission sets, which are installed with the FSL managed package. These must be assigned in addition to any existing permission sets."
+    },
+    {
+      "id": "fsl-eval-012",
+      "topic": "ResourcePreference Required can block scheduling",
+      "prompt": "After configuring ResourcePreference records for a large set of accounts with PreferenceType = Required, a batch of appointments is now unschedulable and the dispatcher console shows scheduling errors. What is the likely cause and how should it be resolved?",
+      "expected_keywords": [
+        "ResourcePreference",
+        "Required",
+        "unschedulable",
+        "Preferred"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "ForecastingItem",
+        "Territory2",
+        "Knowledge"
+      ],
+      "guidance": "The answer must explain that PreferenceType = Required causes scheduling failure when the required resource is unavailable (on leave, at capacity, or outside the scheduling window). The resolution options are: (1) change PreferenceType to Preferred (soft preference) which falls back to other resources; (2) check ResourceAbsence for the required resource and extend or remove the absence; (3) widen the appointment's EarliestStartPermitted/DueDate window to include times when the required resource is available."
+    }
+  ]
+}

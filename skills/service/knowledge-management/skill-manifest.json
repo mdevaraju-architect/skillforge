@@ -1,22 +1,24 @@
 {
   "name": "service-knowledge-management",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "service",
   "capability": "knowledge-management",
-  "description": "KnowledgeArticle, Lightning Knowledge, article type, article version, data category, search, knowledge base",
+  "description": "Service Cloud Knowledge Management — Lightning Knowledge article lifecycle, data categories, channel visibility, search/deflection, versions, and translations",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "internal"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["Knowledge"],
+  "boundary": [
+    "Experience Cloud (Community) Knowledge configuration",
+    "Salesforce Search relevance tuning",
+    "Einstein Generative AI article drafts",
+    "Service Cloud Voice IVR deflection",
+    "Case lifecycle — use service-case-lifecycle"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

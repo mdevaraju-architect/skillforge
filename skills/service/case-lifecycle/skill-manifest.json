@@ -1,22 +1,23 @@
 {
   "name": "service-case-lifecycle",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "service",
   "capability": "case-lifecycle",
-  "description": "Case, CaseStatus, escalation rule, SLA, EntitlementProcess, milestone, case routing, entitlement",
+  "description": "Service Cloud case lifecycle — intake, routing, SLA with entitlements and milestones, escalation, channels (Web/Email/Chat), and closure",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["ServiceCloud"],
+  "boundary": [
+    "OmniChannel routing engine — use service-omni-channel-routing",
+    "Knowledge Management — use service-knowledge-management",
+    "Field Service — use service-field-service",
+    "Chat and Messaging UI configuration"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

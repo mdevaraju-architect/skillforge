@@ -1,22 +1,23 @@
 {
   "name": "sales-forecasting",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "sales",
   "capability": "forecasting",
-  "description": "collaborative forecasting, ForecastingItem, territory, overlay, quota, ForecastingQuota, forecast hierarchy",
+  "description": "Salesforce Collaborative Forecasting — ForecastingType, ForecastingItem, adjustments, quota management, overlay splits, and territory forecasts",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["CollaborativeForecasting"],
+  "boundary": [
+    "Enterprise Territory Management setup — use sales-territory-management",
+    "Opportunity lifecycle and stage management — use sales-opportunity-to-close",
+    "Einstein Forecasting AI predictions",
+    "Revenue Cloud forecasting"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

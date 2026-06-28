@@ -1,22 +1,23 @@
 {
   "name": "sales-territory-management",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "sales",
   "capability": "territory-management",
-  "description": "Enterprise Territory Management, territory2, territory assignment, account assignment rule, territory hierarchy",
+  "description": "Salesforce Enterprise Territory Management — Territory2Model lifecycle, assignment rules, user assignments, territory hierarchy, and forecast integration",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["EnterpriseTerritory2Management"],
+  "boundary": [
+    "Classic Territory Management (legacy, pre-ETM)",
+    "Collaborative Forecasting — use sales-forecasting",
+    "Opportunity lifecycle — use sales-opportunity-to-close",
+    "Platform sharing model beyond territory access"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

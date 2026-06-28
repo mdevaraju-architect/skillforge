@@ -1,22 +1,24 @@
 {
   "name": "sales-revenue-cloud",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "sales",
   "capability": "revenue-cloud",
-  "description": "Revenue Cloud, PCM, Product Catalog Management, pricing, transaction, order lifecycle, subscription, amendment, renewal, Pricebook2",
-  "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "description": "Salesforce New-Core Revenue Cloud — product catalog, attributes, pricing waterfall, transactions, subscription billing, amendments, and revenue recognition",
+  "api-version-min": "62.0",
+  "salesforce-release-min": "Spring26",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["IndustriesRevenue"],
+  "boundary": [
+    "Legacy CPQ (SBQQ__) — separate product, different object model",
+    "Order Management System legacy (OrderSummary, OrderItem) — use OMS skill",
+    "Standard Opportunity products / OpportunityLineItem — use sales-opportunity-to-close",
+    "Revenue Recognition accounting rules — consult finance/audit",
+    "Billing connector configuration"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

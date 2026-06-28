@@ -1,0 +1,265 @@
+{
+  "skill": "service-omni-channel-routing",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "omni-001",
+      "title": "ServiceChannel one-per-object-type constraint",
+      "prompt": "Can I use the same ServiceChannel to route both Case and LiveChatTranscript records in Salesforce OmniChannel?",
+      "expected_behaviors": [
+        "States that one ServiceChannel maps to exactly one SObject type via RelatedEntityType",
+        "Explains that Case and LiveChatTranscript require separate ServiceChannel records",
+        "Mentions that ServiceChannel.DeveloperName is immutable after creation",
+        "Does not suggest workarounds that use a single channel for multiple object types"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["ServiceChannel", "RelatedEntityType", "setup"]
+    },
+    {
+      "id": "omni-002",
+      "title": "RoutingModel push vs pull distinction",
+      "prompt": "What is the difference between MostAvailable and LeastActive routing models in Salesforce OmniChannel, and which is push vs pull?",
+      "expected_behaviors": [
+        "Identifies both MostAvailable and LeastActive as push routing models",
+        "Explains MostAvailable routes to the agent with the most remaining capacity units",
+        "Explains LeastActive routes to the agent with the fewest active work items by count",
+        "Clarifies that push means work is sent to agents without requiring them to pull from a queue",
+        "Mentions ExternalRouting as the third RoutingModel option"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["RoutingConfiguration", "RoutingModel", "push-routing"]
+    },
+    {
+      "id": "omni-003",
+      "title": "AgentWork status lifecycle correctness",
+      "prompt": "What are the valid AgentWork status transitions in Salesforce OmniChannel? Can I set Status = Closed directly without going through Accepted?",
+      "expected_behaviors": [
+        "Lists the full lifecycle: Assigned, Opened, Accepted, Declined, Closed",
+        "Explains that Assigned is set by the routing engine when work is first routed",
+        "Explains that Declined triggers re-routing via a new PendingServiceRouting record",
+        "Warns that setting Status = Closed programmatically without closing the underlying work item causes orphaned records that inflate supervisor metrics",
+        "Notes that the platform closes AgentWork automatically when the work item (Case, Chat) is closed"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["AgentWork", "status-lifecycle"]
+    },
+    {
+      "id": "omni-004",
+      "title": "Capacity units vs work item count",
+      "prompt": "An OmniChannel agent has a ConfiguredCapacity of 10. They have two active Case work items. Are they at capacity? Explain how OmniChannel capacity works.",
+      "expected_behaviors": [
+        "Explains that capacity is measured in capacity units, not raw work item count",
+        "States that RoutingConfiguration.Capacity (or Units of Capacity) sets how many units each work item consumes",
+        "Explains that with two Case items each consuming 5 units, the agent would be at 10/10 = 100% capacity",
+        "Clarifies that with two Case items each consuming 2 units, the agent would be at 4/10 = 40% capacity and can receive more work",
+        "Does not confuse capacity units with work item count"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["capacity", "UserServicePresence", "RoutingConfiguration"]
+    },
+    {
+      "id": "omni-005",
+      "title": "PresenceStatus channel linkage required for routing",
+      "prompt": "We created a new PresenceStatus called 'Available - Cases' but agents in that status are not receiving any routed cases. What is the most likely cause?",
+      "expected_behaviors": [
+        "Identifies that PresenceStatus must have ServiceChannels linked under Presence Status Channels",
+        "Explains that a PresenceStatus without linked ServiceChannels never routes work to agents in that status",
+        "Describes the fix: edit the PresenceStatus in Setup and add the Case ServiceChannel to the Service Channels list",
+        "Does not suggest the issue is with the RoutingConfiguration or queue first without confirming channel linkage"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["PresenceStatus", "ServiceChannel", "troubleshooting"]
+    },
+    {
+      "id": "omni-006",
+      "title": "Skills routing multi-object chain requirement",
+      "prompt": "I set up a RoutingAttributeDefinition for 'Language' and assigned agents the skill via AgentCapacityOverride, but cases are still routing to agents without the Spanish language skill. What am I missing?",
+      "expected_behaviors": [
+        "Identifies that RoutingAttribute must be created on the RoutingConfiguration linking it to the RoutingAttributeDefinition",
+        "Explains the full chain: RoutingAttributeDefinition → RoutingAttribute (on RoutingConfiguration) → AgentCapacityOverride",
+        "Notes that a missing RoutingAttribute causes silent fallback to queue routing with no error",
+        "May also mention AgentWorkSkill if per-work-item skill requirements are needed",
+        "Recommends verifying the full chain in sandbox with SOQL queries"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["skills-based-routing", "RoutingAttribute", "RoutingAttributeDefinition", "AgentCapacityOverride"]
+    },
+    {
+      "id": "omni-007",
+      "title": "Do not delete PendingServiceRouting records",
+      "prompt": "There are old PendingServiceRouting records in our org piling up. Can I delete them via Data Loader to clean them up?",
+      "expected_behaviors": [
+        "Clearly states that deleting PendingServiceRouting records manually abandons the work items silently",
+        "Explains that after deletion the customer's Case or Chat remains open but no agent will ever be assigned",
+        "Recommends resolving the root cause instead: add more agents, fix skill coverage, or check agent presence status",
+        "Suggests setting AgentWork.Status = Declined as the correct way to re-queue stuck work",
+        "Does not recommend deletion as a valid cleanup approach"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["PendingServiceRouting", "data-management", "troubleshooting"]
+    },
+    {
+      "id": "omni-008",
+      "title": "QueueSobject required for queue-based OmniChannel routing",
+      "prompt": "I created a queue for Cases and associated it with a RoutingConfiguration, but OmniChannel is not routing Cases from the queue to agents. What is missing?",
+      "expected_behaviors": [
+        "Identifies that QueueSobject records must link the queue to the Case SObject type",
+        "Explains that creating a queue without adding Case under Supported Objects means no QueueSobject exists for Case",
+        "Provides the SOQL to verify: SELECT Id, QueueId, SobjectType FROM QueueSobject WHERE QueueId = '<id>'",
+        "States that a queue without the correct QueueSobject will not receive Case routing from OmniChannel even if the RoutingConfiguration is correctly configured"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["QueueSobject", "queue-routing", "setup"]
+    },
+    {
+      "id": "omni-009",
+      "title": "Unified Routing add-on license prerequisite",
+      "prompt": "We enabled Unified Routing in Setup but cases are still not being routed through the Unified Routing engine. What prerequisites are we missing?",
+      "expected_behaviors": [
+        "States that Unified Routing requires either the Messaging for In-App and Web or Digital Engagement add-on license",
+        "Explains that enabling Unified Routing without the add-on license shows the UI but does not activate the routing engine",
+        "May mention that each ServiceChannel must be individually opted into Unified Routing via IsEnabled for Unified Routing = true",
+        "Does not suggest Unified Routing works with a base Service Cloud license alone"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["Unified Routing", "licensing", "setup"]
+    },
+    {
+      "id": "omni-010",
+      "title": "AgentWork query filter required in supervisor context",
+      "prompt": "Write a SOQL query to get all active OmniChannel work items for a supervisor dashboard. What filters are essential to avoid governor limit issues?",
+      "expected_behaviors": [
+        "Includes WHERE Status NOT IN ('Closed', 'Declined') filter",
+        "Recommends adding CreatedDate = TODAY or a recent date range for high-volume orgs",
+        "Explains that unfiltered AgentWork queries can return millions of historical rows and cause governor limit failures",
+        "Does not provide a SOQL query with SELECT * FROM AgentWork with no WHERE clause"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["AgentWork", "SOQL", "OmniSupervisor", "governor-limits"]
+    },
+    {
+      "id": "omni-011",
+      "title": "Do not manually insert AgentWork records",
+      "prompt": "I want to test OmniChannel routing in my sandbox by programmatically creating AgentWork records in Apex to simulate routing. Is this a valid approach?",
+      "expected_behaviors": [
+        "States clearly that manually inserting AgentWork records is not a valid approach",
+        "Explains that manual inserts bypass the routing engine's capacity and availability checks",
+        "Explains the consequence: ghost work items that appear in supervisor view but don't reflect real routing state",
+        "Recommends using OmniRouterService Apex class or the assignWorkToAgent Connect API for programmatic routing",
+        "Recommends using actual test agents with proper presence status for sandbox testing"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["AgentWork", "testing", "OmniRouterService"]
+    },
+    {
+      "id": "omni-012",
+      "title": "UserServicePresence.ConfiguredCapacity is fixed at setup",
+      "prompt": "We want to give agents different capacity limits on Monday vs Friday based on expected volume. Can we update UserServicePresence.ConfiguredCapacity dynamically each day?",
+      "expected_behaviors": [
+        "States that ConfiguredCapacity is set at the ServicePresenceConfig (Presence Configuration) level, not per-shift or per-day",
+        "Explains that updating UserServicePresence.ConfiguredCapacity directly via Apex or Data Loader has no effect on routing",
+        "Recommends using AgentCapacityOverride records for per-agent capacity exceptions",
+        "May suggest creating separate Presence Configurations for different capacity tiers and assigning agents to them as needed",
+        "Does not suggest that ConfiguredCapacity can be dynamically changed per session"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "Opportunity",
+        "Territory2",
+        "ForecastingItem",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "tags": ["UserServicePresence", "capacity", "AgentCapacityOverride"]
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "skill": "sales-opportunity-to-close",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "opp-eval-001",
+      "prompt": "I changed the ForecastCategory field directly on an Opportunity record via the API but it keeps getting reset. Why?",
+      "expected_topics": [
+        "ForecastCategory is derived from StageName mapping",
+        "OpportunityStage metadata controls the ForecastCategory per stage",
+        "Changing ForecastCategory directly has no lasting effect without StageName change",
+        "Setup → Opportunity Stages is where the mapping is configured"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "OrderItem"
+      ]
+    },
+    {
+      "id": "opp-eval-002",
+      "prompt": "I'm getting a FIELD_INTEGRITY_EXCEPTION when I try to insert an OpportunityLineItem. What's causing this?",
+      "expected_topics": [
+        "Opportunity.Pricebook2Id must be set before inserting OpportunityLineItem",
+        "PricebookEntryId must reference a PricebookEntry from the same pricebook as Opportunity.Pricebook2Id",
+        "Mismatched pricebook between OpportunityLineItem.PricebookEntryId and Opportunity.Pricebook2Id",
+        "Set Opportunity.Pricebook2Id first, then insert line items"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "OrderItem",
+        "SBQQ__QuoteLine__c"
+      ]
+    },
+    {
+      "id": "opp-eval-003",
+      "prompt": "Why can't I set Opportunity.Amount when the opportunity already has products added?",
+      "expected_topics": [
+        "Opportunity.Amount is auto-calculated from OpportunityLineItem.TotalPrice when line items exist",
+        "Amount becomes read-only when HasOpportunityLineItem is true",
+        "FIELD_NOT_WRITEABLE error when attempting to write Amount with line items present",
+        "Remove all OpportunityLineItem records first to regain direct control of Amount"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "OrderItem"
+      ]
+    },
+    {
+      "id": "opp-eval-004",
+      "prompt": "An opportunity has three contacts linked to it and my report shows multiple 'primary' contacts. How do I fix this?",
+      "expected_topics": [
+        "OpportunityContactRole.IsPrimary must be true on exactly one record per opportunity",
+        "Salesforce does not enforce uniqueness of IsPrimary at the platform level",
+        "Need a trigger or validation rule to enforce a single IsPrimary = true per opportunity",
+        "Query OpportunityContactRole where OpportunityId = X and IsPrimary = true to find duplicates"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "CaseContactRole"
+      ]
+    },
+    {
+      "id": "opp-eval-005",
+      "prompt": "We have two quotes on an opportunity and I set the second one to sync. Now the first quote says IsSyncing = false. Is this a bug?",
+      "expected_topics": [
+        "Only one Quote can have IsSyncing = true per opportunity at a time",
+        "Setting a second Quote to IsSyncing = true automatically unsyncs the previous syncing quote",
+        "This is expected platform behavior, not a bug",
+        "QuoteLineItem changes from the syncing quote flow back to OpportunityLineItem"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "SBQQ__Quote__c",
+        "SBQQ__Primary__c"
+      ]
+    },
+    {
+      "id": "opp-eval-006",
+      "prompt": "Our reps are jumping straight from Prospecting to Closed Won and bypassing all intermediate stages. How do we enforce stage progression?",
+      "expected_topics": [
+        "StageName transitions are not platform-enforced by default",
+        "Validation rules can block stage advances unless required fields are populated",
+        "Path configuration with entry criteria provides guided selling but does not block saves",
+        "Apex trigger on before update can enforce complex stage-entry criteria using PRIORVALUE(StageName)"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "StatusCategory"
+      ]
+    },
+    {
+      "id": "opp-eval-007",
+      "prompt": "I tried to delete an OpportunityHistory record in Apex and got an error. How do I clean up the history?",
+      "expected_topics": [
+        "OpportunityHistory is a read-only system-managed object",
+        "DML operations (insert, update, delete) are not permitted on OpportunityHistory",
+        "OpportunityHistory records cannot be deleted or modified",
+        "OpportunityHistory is the system audit trail for StageName, Amount, Probability, ForecastCategory, and CloseDate changes"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "CaseHistory",
+        "AccountHistory"
+      ]
+    },
+    {
+      "id": "opp-eval-008",
+      "prompt": "Our reps keep overriding Probability on their deals and then it gets reset when they change the stage. What's happening?",
+      "expected_topics": [
+        "Opportunity.Probability is auto-set from the stage's default probability percentage when StageName changes",
+        "Manual edits to Probability are overwritten by the next StageName change",
+        "Use a custom OverrideProbability__c field for deal-specific probability",
+        "Setup → Forecast Settings → Allow overriding of probability can be enabled to prevent auto-reset"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "ForecastingItem",
+        "ForecastingQuota"
+      ]
+    },
+    {
+      "id": "opp-eval-009",
+      "prompt": "We want to measure the impact of all our marketing campaigns on closed won deals, not just the last-touch campaign. How do we set this up in Salesforce?",
+      "expected_topics": [
+        "CampaignInfluence object links Campaign, Opportunity, and Contact for multi-touch attribution",
+        "Opportunity.CampaignId is a single primary campaign source field — not suitable for multi-touch",
+        "CampaignInfluence must be enabled in Setup → Campaign Influence",
+        "Attribution models: First Touch, Last Touch, Even Distribution, Custom"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "ServiceContract"
+      ]
+    },
+    {
+      "id": "opp-eval-010",
+      "prompt": "I'm trying to insert an OpportunityTeamMember with role 'Regional Director' but getting INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST. That role exists in our other sandbox.",
+      "expected_topics": [
+        "TeamMemberRole is a restricted picklist with org-specific values",
+        "Opportunity Team Roles are configured in Setup → Opportunity Team Roles",
+        "Each org has its own set of valid TeamMemberRole values — they are not shared across orgs",
+        "Query the target org's OpportunityTeamMember describe or Setup to get valid values before inserting"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "AccountTeamMember"
+      ]
+    },
+    {
+      "id": "opp-eval-011",
+      "prompt": "What happens if I don't set CloseDate when creating a new Opportunity and just leave it blank?",
+      "expected_topics": [
+        "CloseDate is a required field on Opportunity — the record cannot be saved without it",
+        "Integration patterns that default CloseDate to today's date pollute pipeline reports with past-due dates",
+        "CloseDate should be a realistic future date based on the expected close timeline",
+        "Pipeline reports and forecast views filter on CloseDate — a past or junk date breaks these reports"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "ContractEndDate"
+      ]
+    },
+    {
+      "id": "opp-eval-012",
+      "prompt": "I'm importing OpportunityLineItems via Bulk API. Should I include TotalPrice, Quantity, and UnitPrice all three in my CSV?",
+      "expected_topics": [
+        "TotalPrice is calculated as Quantity × UnitPrice and should not be set directly",
+        "Providing TotalPrice alongside Quantity and UnitPrice causes a field conflict error",
+        "Bulk API import for OpportunityLineItem should include Quantity and UnitPrice; omit TotalPrice",
+        "Discount field is a percentage that modifies UnitPrice — TotalPrice will auto-calculate"
+      ],
+      "must_not_contain": [
+        "Case",
+        "Entitlement",
+        "WorkOrder",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "TransactionLineItem",
+        "BillingSchedule",
+        "OrderItem",
+        "SBQQ__QuoteLine__c"
+      ]
+    }
+  ]
+}

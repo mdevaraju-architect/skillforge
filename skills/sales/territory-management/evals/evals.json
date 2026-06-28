@@ -1,0 +1,255 @@
+{
+  "skill": "sales-territory-management",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "etm-001",
+      "description": "One active territory model at a time",
+      "prompt": "We have a Territory2Model in Planning state and we want to activate it. What happens to our existing active model?",
+      "must_contain": [
+        "Archived",
+        "Territory2Model",
+        "State",
+        "automatically"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["model-lifecycle", "activation", "gotcha-1"]
+    },
+    {
+      "id": "etm-002",
+      "description": "Territory2Type required before Territory2",
+      "prompt": "I tried to insert a Territory2 record in Apex but got a REQUIRED_FIELD_MISSING error. What did I forget?",
+      "must_contain": [
+        "Territory2Type",
+        "Territory2TypeId",
+        "REQUIRED_FIELD_MISSING"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["setup", "Territory2Type", "gotcha-2"]
+    },
+    {
+      "id": "etm-003",
+      "description": "Territory2Rule filters Account fields only",
+      "prompt": "Can I write a Territory2Rule that assigns accounts to territories based on the Opportunity CloseDate or the Contact's MailingState?",
+      "must_contain": [
+        "Account",
+        "only",
+        "Territory2Rule"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__",
+        "Opportunity fields",
+        "Contact fields"
+      ],
+      "tags": ["assignment-rules", "gotcha-3"]
+    },
+    {
+      "id": "etm-004",
+      "description": "ObjectTerritory2Association is the assignment record",
+      "prompt": "How do I assign an Account to a Territory in Salesforce ETM? Which object do I create?",
+      "must_contain": [
+        "ObjectTerritory2Association",
+        "AssociationCause",
+        "Manual"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["assignment", "ObjectTerritory2Association", "gotcha-4"]
+    },
+    {
+      "id": "etm-005",
+      "description": "Rule execution is async, not real-time",
+      "prompt": "A rep changed the BillingState on an Account from NY to CA. Will the territory assignment update immediately?",
+      "must_contain": [
+        "not",
+        "async",
+        "run"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__",
+        "automatically reassign",
+        "real-time"
+      ],
+      "tags": ["assignment-rules", "async", "gotcha-5"]
+    },
+    {
+      "id": "etm-006",
+      "description": "UserTerritory2Association controls access",
+      "prompt": "How does a sales rep get access to accounts in their territory in Salesforce ETM?",
+      "must_contain": [
+        "UserTerritory2Association",
+        "AccountShare",
+        "Territory2"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__",
+        "profile change",
+        "role hierarchy change"
+      ],
+      "tags": ["access", "UserTerritory2Association", "gotcha-6"]
+    },
+    {
+      "id": "etm-007",
+      "description": "Territory hierarchy inheritance is one-way downward",
+      "prompt": "If I assign a sales manager to a parent territory, will they automatically see accounts in all child territories?",
+      "must_contain": [
+        "not automatically",
+        "sharing",
+        "parent"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["hierarchy", "access", "gotcha-7"]
+    },
+    {
+      "id": "etm-008",
+      "description": "OpportunityTerritory2Association is separate from Account territory",
+      "prompt": "We reassigned a big account from the West territory to the East territory. Will the open opportunities on that account also move to East in the forecast?",
+      "must_contain": [
+        "OpportunityTerritory2Association",
+        "not automatically",
+        "Territory2Id"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["opportunity-territory", "forecasting", "gotcha-8"]
+    },
+    {
+      "id": "etm-009",
+      "description": "Territory2Rule edits require Planning state",
+      "prompt": "I need to update a Territory2Rule to add a new criterion. The model is currently Active. Can I edit the rule directly?",
+      "must_contain": [
+        "Planning",
+        "clone",
+        "Active"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__",
+        "edit directly",
+        "update the rule on the active model"
+      ],
+      "tags": ["model-lifecycle", "rules", "gotcha-9"]
+    },
+    {
+      "id": "etm-010",
+      "description": "Clone does not copy user assignments",
+      "prompt": "We cloned our Active territory model to a new Planning model. Do we need to reassign all the sales reps to territories again?",
+      "must_contain": [
+        "UserTerritory2Association",
+        "not copied",
+        "clone"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["model-lifecycle", "cloning", "gotcha-10"]
+    },
+    {
+      "id": "etm-011",
+      "description": "AccountShare is auto-created by territory, not manually insertable",
+      "prompt": "Can I insert AccountShare records with RowCause = Territory2 manually to give reps access to accounts in their territory?",
+      "must_contain": [
+        "not supported",
+        "auto",
+        "Territory2"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["AccountShare", "access", "gotcha-11"]
+    },
+    {
+      "id": "etm-012",
+      "description": "ParentTerritory2Id null means top-level territory",
+      "prompt": "How do I find the root (top-level) territories in a Territory2Model?",
+      "must_contain": [
+        "ParentTerritory2Id",
+        "null",
+        "Territory2"
+      ],
+      "must_not_contain": [
+        "Case",
+        "EntitlementContact",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "FinancialAccount",
+        "WorkOrder",
+        "SBQQ__"
+      ],
+      "tags": ["hierarchy", "ParentTerritory2Id", "gotcha-12"]
+    }
+  ]
+}
