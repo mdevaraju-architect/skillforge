@@ -1,0 +1,157 @@
+{
+  "skill": "industries-fsc-producer-hierarchy",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "producer-relationship-license-gate",
+      "prompt": "I want to model a parent-child hierarchy between producers in my FSC org but I don't have FSCInsurancePsl seats. What do I do?",
+      "expected_topics": [
+        "InsProducerRelationship__c custom object",
+        "FSCInsurancePsl gates standard ProducerRelationship",
+        "mirrors standard schema for drop-in replacement",
+        "ParentProducerId__c and ChildProducerId__c"
+      ],
+      "must_not_contain": ["use ProducerRelationship directly", "just query ProducerRelationship", "no workaround needed"],
+      "compliance_check": null
+    },
+    {
+      "id": "individual-agent-account-model",
+      "prompt": "Should I create individual insurance agents as Person Accounts or Business Account + Contact?",
+      "expected_topics": [
+        "Business Account + Contact",
+        "Person Account is for policyholders only",
+        "Producer.AccountId and Producer.ContactId",
+        "BusinessLicense on both Account and Contact for individuals"
+      ],
+      "must_not_contain": ["Person Account for agents", "agents can be Person Accounts"],
+      "compliance_check": null
+    },
+    {
+      "id": "one-ppa-per-producer-rule",
+      "prompt": "An agent appears in both Channel 1 (Thompson 004 DST) and Channel 2 (Legacy Wealth 106 DST) for the same policy. How many ProducerPolicyAssignment records should I create for that agent?",
+      "expected_topics": [
+        "one PPA per producer per policy",
+        "not one per DST channel",
+        "channel tracking lives in InsProducerRelationship__c",
+        "duplicate PPAs inflate production volume"
+      ],
+      "must_not_contain": ["one PPA per channel", "two PPAs", "create a PPA for each DST", "one record per channel is correct"],
+      "compliance_check": null
+    },
+    {
+      "id": "floating-agent-pattern",
+      "prompt": "Ray Jacobs operates across Colorado Wealth and Financial Planning with no fixed firm. How do I model his multi-firm affiliation?",
+      "expected_topics": [
+        "one Producer record",
+        "AccountContactRelation to each firm",
+        "InsProducerRelationship__c from each CRP to Ray Jacobs",
+        "single PPA per policy"
+      ],
+      "must_not_contain": ["create multiple Producer records", "one Producer per firm", "duplicate PPAs"],
+      "compliance_check": null
+    },
+    {
+      "id": "distributor-authorization-contact-id-rule",
+      "prompt": "Should I populate ContactId on DistributorAuthorization for a DST-level firm like Thompson 004?",
+      "expected_topics": [
+        "ContactId is null for firm-level entries",
+        "ContactId populated only for individual agents",
+        "firm-level vs individual-level authorization distinction"
+      ],
+      "must_not_contain": ["always populate ContactId", "ContactId is required for all entries"],
+      "compliance_check": null
+    },
+    {
+      "id": "business-license-account-layout-api-constraint",
+      "prompt": "My SFDX deploy failed when I tried to add BusinessLicense as a related list on the Account page layout. What's happening?",
+      "expected_topics": [
+        "cannot be deployed via Metadata API at API 65.0",
+        "add manually through Setup UI",
+        "known API constraint",
+        "Object Manager → Account → Page Layouts"
+      ],
+      "must_not_contain": ["this should work via metadata", "just add it to the XML", "permissions issue"],
+      "compliance_check": null
+    },
+    {
+      "id": "commission-hierarchy-vs-producer-hierarchy",
+      "prompt": "What is the difference between the ProducerCommission hierarchy and the InsProducerRelationship__c hierarchy?",
+      "expected_topics": [
+        "ProducerCommission is money flow — master to clearing to splits",
+        "InsProducerRelationship__c is org structure — DST to RTF/CRP to agent",
+        "separate objects, separate purposes",
+        "ParentProducerCommissionId drives commission hierarchy"
+      ],
+      "must_not_contain": ["they are the same thing", "use ProducerCommission for hierarchy navigation"],
+      "compliance_check": null
+    },
+    {
+      "id": "legal-entity-creation-order",
+      "prompt": "I'm trying to create a DistributorAuthorization but keep getting an error. What am I missing?",
+      "expected_topics": [
+        "AuthorizedInsuranceLine must exist first",
+        "LegalEntity must exist before AuthorizedInsuranceLine",
+        "AuthorizedInsuranceLine.LegalEntityId is required",
+        "creation order: LegalEntity → AuthorizedInsuranceLine → DistributorAuthorization"
+      ],
+      "must_not_contain": ["DistributorAuthorization has no dependencies", "create in any order"],
+      "compliance_check": null
+    },
+    {
+      "id": "producer-policy-assignment-vs-insurance-policy-participant",
+      "prompt": "I need to link a policyholder to a policy and also track which agent sold it. Which objects do I use?",
+      "expected_topics": [
+        "InsurancePolicyParticipant for the policyholder (Role = Insured)",
+        "ProducerPolicyAssignment for the agent",
+        "completely different objects, do not overlap",
+        "PrimaryParticipantAccountId is a Person Account"
+      ],
+      "must_not_contain": [
+        "use InsurancePolicyParticipant for both",
+        "use ProducerPolicyAssignment for policyholders",
+        "they are interchangeable"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "account-contact-relation-multi-select-soql",
+      "prompt": "How do I query AccountContactRelation records where the Roles field contains 'Registered Representative'?",
+      "expected_topics": [
+        "INCLUDES operator, not =",
+        "Roles is a multipicklist",
+        "WHERE Roles INCLUDES ('Registered Representative')"
+      ],
+      "must_not_contain": ["WHERE Roles = 'Registered Representative'", "equals operator works fine", "Roles is a single picklist"],
+      "compliance_check": null
+    },
+    {
+      "id": "insproducerrelationship-delete-constraint",
+      "prompt": "How should I configure the lookup fields on InsProducerRelationship__c to prevent orphaned records?",
+      "expected_topics": [
+        "deleteConstraint=Restrict on both ParentProducerId__c and ChildProducerId__c",
+        "prevents Producer deletion while referenced in hierarchy",
+        "mirrors standard ProducerRelationship constraint"
+      ],
+      "must_not_contain": ["deleteConstraint=SetNull", "deleteConstraint=Cascade", "no constraint needed"],
+      "compliance_check": null
+    },
+    {
+      "id": "compliance-gate-soql-safety",
+      "prompt": "I'm writing an Apex compliance gate that validates producer licenses before policy issuance. Are there any safety rules to follow?",
+      "expected_topics": [
+        "bound variables only — never string concatenation",
+        "with sharing to respect record-level security",
+        "log compliance check result to audit record",
+        "check both AccountId and ContactId for individual agents"
+      ],
+      "must_not_contain": [
+        "string concatenation in SOQL is fine",
+        "without sharing is acceptable for compliance checks",
+        "FinancialAccount",
+        "ClaimReserve",
+        "MortgageApplication"
+      ],
+      "compliance_check": null
+    }
+  ]
+}

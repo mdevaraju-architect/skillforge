@@ -1,0 +1,34 @@
+{
+  "name": "industries-fsc-producer-hierarchy",
+  "version": "1.0.0",
+  "domain": "industries/fsc",
+  "capability": "producer-hierarchy",
+  "description": "FSC Insurance distribution architecture — multi-tier producer hierarchy (DST/RTF/CRP/Agent), ProducerRelationship vs InsProducerRelationship__c, ProducerPolicyAssignment, ProducerCommission splits, BusinessLicense, DistributorAuthorization, and compliance gate patterns",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Summer25",
+  "approval-tier": "draft",
+  "compliance": {
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted",
+    "notes": "Producer records contain NPN (National Producer Number), a regulated individual identifier. BusinessLicense and DistributorAuthorization records are regulatory compliance data. Handle with minimum necessary field access."
+  },
+  "requires-features": ["FSCInsurance"],
+  "optional-features": ["FSCInsurancePsl"],
+  "boundary": [
+    "FSC Insurance Claims — use industries-fsc-claims-process",
+    "FSC Insurance Policy lifecycle (endorsements, renewals, cancellations) — use industries-fsc-policy-administration",
+    "FSC Wealth Management — use industries-fsc-wealth-management",
+    "FSC Mortgage Origination — use industries-fsc-mortgage-origination",
+    "Commission calculation engines and RevShare platforms",
+    "Health Cloud"
+  ],
+  "maintainers": ["skillforge-maintainers"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-28",
+      "summary": "Initial release — full FSC Insurance distribution architecture skill based on SDD/TDD from production implementation. Covers multi-tier producer hierarchy, InsProducerRelationship__c custom object, dual-DST channel patterns, floating agent model, commission splits, licensing, and compliance gate."
+    }
+  ]
+}
