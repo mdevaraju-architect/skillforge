@@ -1,0 +1,22 @@
+{
+  "name": "service-knowledge-management",
+  "version": "0.1.0",
+  "domain": "service",
+  "capability": "knowledge-management",
+  "description": "KnowledgeArticle, Lightning Knowledge, article type, article version, data category, search, knowledge base",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

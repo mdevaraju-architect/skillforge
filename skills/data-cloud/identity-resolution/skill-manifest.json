@@ -1,0 +1,22 @@
+{
+  "name": "data-cloud-identity-resolution",
+  "version": "0.1.0",
+  "domain": "data-cloud",
+  "capability": "identity-resolution",
+  "description": "Identity Resolution, matching rule, reconciliation, Unified Individual, Unified Profile, deduplication",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

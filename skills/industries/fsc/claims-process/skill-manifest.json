@@ -1,0 +1,32 @@
+{
+  "name": "fsc-claims-process",
+  "version": "1.0.0",
+  "domain": "industries/fsc",
+  "capability": "claims-process",
+  "description": "End-to-end FSC Insurance claims lifecycle — FNOL, adjudication, fraud/STP, reserves, payments, OmniStudio",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Summer25",
+  "approval-tier": "draft",
+  "compliance": {
+    "regulations": ["FINRA", "SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted",
+    "notes": "Claim records contain PII (claimant names, addresses, financial data) and PHI in life/disability claims. Queries returning claim data should use minimum necessary fields."
+  },
+  "requires-features": ["FSCInsurance", "FSCInsuranceClaims", "OmniStudio"],
+  "boundary": [
+    "Health Cloud CarePlan — use health-cloud/care-management skill",
+    "Revenue Cloud / CPQ pricing — use sales/revenue-cloud skill",
+    "FSC Wealth Management (FinancialAccount, goals, AUM) — use industries/fsc/wealth-management skill",
+    "FSC Mortgage Origination — use industries/fsc/mortgage-origination skill",
+    "Generic Service Cloud Case (non-claims) — use service/case-lifecycle skill"
+  ],
+  "maintainers": ["mdevaraju-architect"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-27",
+      "summary": "Initial release — full claims lifecycle coverage including FNOL, adjudication, fraud/STP, reserves, payments, OmniStudio, documents, data migration"
+    }
+  ]
+}

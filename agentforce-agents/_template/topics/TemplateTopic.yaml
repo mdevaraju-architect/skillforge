@@ -1,0 +1,40 @@
+# Topic definition template
+# One file per topic. Topic names must be unique within an agent.
+
+apiVersion: "63.0"
+kind: AgentTopic
+
+metadata:
+  name: TemplateTopic
+  label: Template Topic
+  description: >-
+    Handles [describe what triggers this topic — be specific about user intents
+    and keywords that should route here].
+
+spec:
+  # Instructions: detailed guidance for this topic
+  # Write as if explaining to a smart colleague, not a machine
+  instructions: >-
+    When handling [topic domain] requests:
+
+    1. [Step 1 — gather necessary information]
+    2. [Step 2 — validate or look up]
+    3. [Step 3 — take action or respond]
+
+    If the user asks about [out-of-scope area], respond that you cannot help
+    with that and offer to [alternative].
+
+    Always confirm [key field] before taking any action.
+
+  # Actions available to this topic
+  actions:
+    - actionRef: TemplateAction
+
+  # Scope: what this topic does and explicitly does not cover
+  scope:
+    includes:
+      - "[user intent 1]"
+      - "[user intent 2]"
+    excludes:
+      - "[out-of-scope intent 1]"
+      - "[out-of-scope intent 2]"

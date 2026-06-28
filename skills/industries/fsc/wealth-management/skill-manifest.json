@@ -1,0 +1,22 @@
+{
+  "name": "industries-fsc-wealth-management",
+  "version": "0.1.0",
+  "domain": "industries/fsc",
+  "capability": "wealth-management",
+  "description": "FinancialAccount, FinancialGoal, FinancialHolding, AUM, referral, advisor, relationship group, household, wealth management",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

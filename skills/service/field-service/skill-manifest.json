@@ -1,0 +1,22 @@
+{
+  "name": "service-field-service",
+  "version": "0.1.0",
+  "domain": "service",
+  "capability": "field-service",
+  "description": "Work Order, ServiceAppointment, ServiceResource, DispatcherConsole, FSL, territory, scheduling policy, technician",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "data-cloud-activation",
+  "version": "0.1.0",
+  "domain": "data-cloud",
+  "capability": "activation",
+  "description": "Activation, activation target, Marketing Cloud activation, CRM activation, audience, Data Cloud activation",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

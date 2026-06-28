@@ -1,0 +1,56 @@
+# AiEvaluationDefinition test spec template
+# Deploy with: sf agent test run --definition-file eval-spec.yaml
+
+apiVersion: "63.0"
+kind: AiEvaluationDefinition
+
+metadata:
+  name: TemplateAgent_Evals
+  label: Template Agent Evaluations
+  description: Evaluation scenarios for TemplateAgent
+
+spec:
+  agentRef: TemplateAgent
+  testCases:
+    - name: happy-path-basic
+      description: Basic success scenario — agent completes primary task
+      userMessages:
+        - "[Standard user request for the primary capability]"
+      expectedOutcome:
+        type: TopicClassification
+        expectedTopic: TemplateTopic
+      passCriteria:
+        - type: ContainsText
+          text: "[Key phrase that must appear in a correct response]"
+        - type: DoesNotContainText
+          text: "[Phrase that would indicate incorrect behavior]"
+
+    - name: out-of-scope-escalation
+      description: Agent correctly declines out-of-scope request
+      userMessages:
+        - "[Request for something outside the agent's scope]"
+      expectedOutcome:
+        type: Escalation
+      passCriteria:
+        - type: ContainsText
+          text: "cannot help"
+
+    - name: ambiguous-input
+      description: Agent asks for clarification on ambiguous input
+      userMessages:
+        - "[Ambiguous request that requires clarification]"
+      expectedOutcome:
+        type: ClarificationRequest
+      passCriteria:
+        - type: ContainsText
+          text: "could you clarify"
+
+    - name: missing-required-field
+      description: Agent asks for required information it cannot proceed without
+      userMessages:
+        - "[Request that omits a required field]"
+      expectedOutcome:
+        type: InformationGathering
+      passCriteria:
+        - type: ContainsText
+          text: "[Required field label]"

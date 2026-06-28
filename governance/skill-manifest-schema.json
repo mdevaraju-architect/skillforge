@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/mdevaraju-architect/salesforce-agent-skills/governance/skill-manifest-schema.json",
+  "title": "SkillManifest",
+  "description": "Machine-readable metadata for a Salesforce Agent Skill",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "domain",
+    "capability",
+    "api-version-min",
+    "salesforce-release-min",
+    "approval-tier",
+    "compliance",
+    "maintainers"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Globally unique skill name — used as the install key",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["fsc-claims-process", "platform-bulk-data-processing"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "2.3.1"]
+    },
+    "domain": {
+      "type": "string",
+      "description": "Top-level domain path within the skills/ directory",
+      "enum": [
+        "platform",
+        "sales",
+        "service",
+        "industries/fsc",
+        "industries/health-cloud",
+        "industries/manufacturing-cloud",
+        "industries/public-sector",
+        "industries/net-zero",
+        "agentforce",
+        "data-cloud"
+      ]
+    },
+    "capability": {
+      "type": "string",
+      "description": "Capability name within the domain — maps to the directory name",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line human description of what this skill covers"
+    },
+    "api-version-min": {
+      "type": "string",
+      "description": "Minimum Salesforce API version required (e.g. '60.0')",
+      "pattern": "^\\d+\\.0$"
+    },
+    "salesforce-release-min": {
+      "type": "string",
+      "description": "Minimum Salesforce release name (e.g. 'Winter25')",
+      "pattern": "^(Winter|Spring|Summer)\\d{2}$"
+    },
+    "approval-tier": {
+      "type": "string",
+      "description": "Governance approval tier",
+      "enum": ["draft", "reviewed", "certified", "deprecated"]
+    },
+    "compliance": {
+      "type": "object",
+      "required": ["org-types", "data-sensitivity"],
+      "additionalProperties": false,
+      "properties": {
+        "regulations": {
+          "type": "array",
+          "description": "Regulations this skill has been validated against",
+          "items": {
+            "type": "string",
+            "enum": ["FINRA", "HIPAA", "GDPR", "FedRAMP", "SOC2", "PCI-DSS", "CCPA", "SOX"]
+          },
+          "uniqueItems": true
+        },
+        "org-types": {
+          "type": "array",
+          "description": "Salesforce org types this skill is validated for",
+          "items": {
+            "type": "string",
+            "enum": ["scratch", "sandbox", "developer", "uat", "staging", "production"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "data-sensitivity": {
+          "type": "string",
+          "description": "Highest data sensitivity level this skill touches",
+          "enum": ["none", "internal", "confidential", "restricted"]
+        },
+        "notes": {
+          "type": "string",
+          "description": "Free-text compliance notes, caveats, or limitations"
+        }
+      }
+    },
+    "requires-features": {
+      "type": "array",
+      "description": "Salesforce features or managed packages that must be enabled",
+      "items": { "type": "string" },
+      "examples": [["FSCInsurance", "OmniStudio"], ["HealthCloudGA"]]
+    },
+    "boundary": {
+      "type": "array",
+      "description": "Adjacent domains and capabilities this skill explicitly does NOT cover",
+      "items": { "type": "string" }
+    },
+    "maintainers": {
+      "type": "array",
+      "description": "GitHub handles of current maintainers",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "changelog": {
+      "type": "array",
+      "description": "Version history",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "summary"],
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "summary": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "industries-net-zero-carbon-accounting",
+  "version": "0.1.0",
+  "domain": "industries/net-zero",
+  "capability": "carbon-accounting",
+  "description": "Scope 1, Scope 2, Scope 3, carbon accounting, emissions factor, reduction target, carbon offset, net zero cloud",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

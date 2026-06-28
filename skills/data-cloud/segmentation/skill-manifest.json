@@ -1,0 +1,22 @@
+{
+  "name": "data-cloud-segmentation",
+  "version": "0.1.0",
+  "domain": "data-cloud",
+  "capability": "segmentation",
+  "description": "Segment, segment builder, Calculated Insight, activation audience, data segmentation, Data Cloud segment",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

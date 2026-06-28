@@ -1,0 +1,22 @@
+{
+  "name": "industries-public-sector-grants-management",
+  "version": "0.1.0",
+  "domain": "industries/public-sector",
+  "capability": "grants-management",
+  "description": "Grant, IndividualApplication, grant lifecycle, compliance reporting, disbursement, public sector solutions",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

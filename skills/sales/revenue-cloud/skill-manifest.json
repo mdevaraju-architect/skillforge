@@ -1,0 +1,22 @@
+{
+  "name": "sales-revenue-cloud",
+  "version": "0.1.0",
+  "domain": "sales",
+  "capability": "revenue-cloud",
+  "description": "Revenue Cloud, PCM, Product Catalog Management, pricing, transaction, order lifecycle, subscription, amendment, renewal, Pricebook2",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

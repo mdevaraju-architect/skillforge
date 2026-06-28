@@ -1,0 +1,43 @@
+# Agentforce Agent definition template
+# Deploy with: sf agent generate definition (or manually via Setup > Agents)
+
+apiVersion: "63.0"
+kind: Agent
+
+metadata:
+  name: TemplateAgent
+  label: Template Agent
+  description: >-
+    Template agent definition. Replace all placeholder values before deploying.
+
+spec:
+  # Agent type: 'ServiceAgent' for autonomous service agents,
+  # 'CopilotForSalesforce' for Einstein Copilot
+  agentType: ServiceAgent
+
+  # System prompt: sets the agent's identity and overarching behavior
+  systemPrompt: >-
+    You are [Agent Name], a Salesforce agent that helps [primary persona] with
+    [primary task domain]. You have access to [list key capabilities].
+
+    Always [guardrail 1].
+    Never [guardrail 2].
+
+    If you cannot complete a request, explain why and offer to escalate to [human role].
+
+  # Topics: each topic is a discrete area of capability
+  # Topics are declared here and defined in topics/
+  topics:
+    - topicRef: TemplateTopic
+
+  # Channels: where this agent can be deployed
+  channels:
+    - type: EmbeddedServiceDeployment
+      label: Web Chat
+    - type: MobileSDK
+      label: Mobile
+
+  # Session settings
+  session:
+    maxTurns: 20
+    idleTimeoutMinutes: 30

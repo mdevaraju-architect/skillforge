@@ -1,0 +1,22 @@
+{
+  "name": "platform-devops-and-deployment",
+  "version": "0.1.0",
+  "domain": "platform",
+  "capability": "devops-and-deployment",
+  "description": "SFDX, sf CLI, scratch org, sandbox, deployment, CI/CD, change set, Gearset, Copado, metadata API, source tracking",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

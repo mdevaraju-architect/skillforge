@@ -1,0 +1,22 @@
+{
+  "name": "agentforce-agent-design-patterns",
+  "version": "0.1.0",
+  "domain": "agentforce",
+  "capability": "agent-design-patterns",
+  "description": "Agentforce, agent topic, agent action, guardrail, agent design, system prompt, Einstein Copilot, Service Agent",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

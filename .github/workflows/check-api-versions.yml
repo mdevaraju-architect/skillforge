@@ -1,0 +1,76 @@
+name: Check API Versions
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/skill-manifest.json'
+      - 'governance/api-version-matrix.md'
+      - 'governance/skill-manifest-schema.json'
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate skill manifests against schema
+        run: node testing/eval-runner/check-api-versions.js
+
+      - name: Check version format consistency
+        run: |
+          python3 - <<'PYEOF'
+          import json, os, re, sys
+
+          REPO = os.path.dirname(os.path.abspath('skills'))
+          VALID_API = re.compile(r'^\d+\.0$')
+          VALID_REL = re.compile(r'^(Winter|Spring|Summer)\d{2}$')
+
+          failed = False
+          for root, dirs, files in os.walk('skills'):
+              dirs[:] = [d for d in dirs if not d.startswith('_')]
+              for f in files:
+                  if f != 'skill-manifest.json':
+                      continue
+                  path = os.path.join(root, f)
+                  try:
+                      data = json.load(open(path))
+                  except json.JSONDecodeError as e:
+                      print(f"❌  {path}: invalid JSON: {e}")
+                      failed = True
+                      continue
+
+                  api_ver = data.get('api-version-min', '')
+                  sf_rel = data.get('salesforce-release-min', '')
+
+                  if api_ver and not VALID_API.match(api_ver):
+                      print(f"❌  {path}: api-version-min '{api_ver}' invalid (expected e.g. '60.0')")
+                      failed = True
+                  if sf_rel and not VALID_REL.match(sf_rel):
+                      print(f"❌  {path}: salesforce-release-min '{sf_rel}' invalid (expected e.g. 'Winter25')")
+                      failed = True
+                  if api_ver and sf_rel:
+                      print(f"✓  {path}: {api_ver} / {sf_rel}")
+
+          sys.exit(1 if failed else 0)
+          PYEOF
+
+      - name: Block approval-tier promotion without required reviewers
+        run: |
+          # Check if any manifest changed from draft to reviewed/certified
+          # Reviewers are enforced via CODEOWNERS — this step just surfaces the check
+          for manifest in $(git diff --name-only origin/main...HEAD -- 'skills/**/skill-manifest.json'); do
+            if [ -f "$manifest" ]; then
+              NEW_TIER=$(python3 -c "import json; d=json.load(open('$manifest')); print(d.get('approval-tier',''))")
+              if [ "$NEW_TIER" = "certified" ]; then
+                echo "⚠️   $manifest is being promoted to 'certified' — ensure compliance review is in governance/compliance-matrix.md"
+              fi
+            fi
+          done

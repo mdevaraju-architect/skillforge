@@ -1,0 +1,22 @@
+{
+  "name": "industries-health-cloud-care-management",
+  "version": "0.1.0",
+  "domain": "industries/health-cloud",
+  "capability": "care-management",
+  "description": "CarePlan, CareProgramEnrollee, ClinicalEncounter, FHIR R4, HIPAA, patient, member, care gap, health cloud",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

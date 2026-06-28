@@ -1,0 +1,22 @@
+{
+  "name": "industries-manufacturing-cloud-sales-agreements",
+  "version": "0.1.0",
+  "domain": "industries/manufacturing-cloud",
+  "capability": "sales-agreements",
+  "description": "SalesAgreement, account-based forecasting, sales agreement term, rebate, manufacturing cloud",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

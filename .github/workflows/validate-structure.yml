@@ -1,0 +1,62 @@
+name: Validate Structure
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'governance/**'
+      - 'testing/**'
+
+jobs:
+  validate-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate skill directory structure
+        run: node testing/eval-runner/validate-structure.js
+
+      - name: Check skill manifest schema
+        run: node testing/eval-runner/check-api-versions.js
+
+      - name: Check shell scripts have --help and --target-org
+        run: |
+          FAILED=0
+          for script in skills/**/scripts/*.sh; do
+            if [ -f "$script" ]; then
+              if ! grep -qE "\-\-help|\-h" "$script"; then
+                echo "❌  $script: missing --help handler"
+                FAILED=1
+              fi
+              if ! grep -q "\-\-target-org" "$script"; then
+                echo "⚠️   $script: missing --target-org support"
+              fi
+              echo "✓  $script"
+            fi
+          done
+          exit $FAILED
+
+      - name: Verify no skill manifests declare 'certified' without governance entry
+        run: |
+          FAILED=0
+          for manifest in skills/**/skill-manifest.json; do
+            if [ -f "$manifest" ]; then
+              TIER=$(python3 -c "import json; d=json.load(open('$manifest')); print(d.get('approval-tier',''))")
+              if [ "$TIER" = "certified" ]; then
+                SKILL=$(python3 -c "import json; d=json.load(open('$manifest')); print(d.get('name',''))")
+                if ! grep -q "$SKILL" governance/compliance-matrix.md; then
+                  echo "❌  $manifest declares 'certified' but has no entry in governance/compliance-matrix.md"
+                  FAILED=1
+                fi
+              fi
+            fi
+          done
+          exit $FAILED

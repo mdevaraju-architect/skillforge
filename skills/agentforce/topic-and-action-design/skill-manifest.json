@@ -1,0 +1,22 @@
+{
+  "name": "agentforce-topic-and-action-design",
+  "version": "0.1.0",
+  "domain": "agentforce",
+  "capability": "topic-and-action-design",
+  "description": "AgentTopic, AgentAction, topic instruction, action type, Apex action, Flow action, prompt template action, context",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

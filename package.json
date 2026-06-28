@@ -1,0 +1,42 @@
+{
+  "name": "salesforce-agent-skills",
+  "version": "1.0.0",
+  "description": "Enterprise Salesforce Agent Skills, MCP Plugins, and Agentforce Agent definitions for AI coding agents",
+  "skills": [
+    {
+      "name": "fsc-claims-process",
+      "path": "skills/industries/fsc/claims-process/SKILL.md",
+      "domain": "industries/fsc",
+      "approval-tier": "draft"
+    }
+  ],
+  "keywords": [
+    "salesforce",
+    "agent-skills",
+    "claude-code",
+    "financial-services-cloud",
+    "fsc",
+    "agentforce",
+    "data-cloud",
+    "mcp",
+    "omnistudio"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mdevaraju-architect/salesforce-agent-skills.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "validate": "node testing/eval-runner/validate-structure.js",
+    "test:evals": "node testing/eval-runner/run-evals.js",
+    "lint:manifests": "node testing/eval-runner/check-api-versions.js",
+    "security:scan": "node testing/eval-runner/security-scan.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0",
+    "js-yaml": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

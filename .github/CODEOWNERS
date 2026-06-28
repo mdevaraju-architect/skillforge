@@ -1,0 +1,19 @@
+# CODEOWNERS
+# Automatically requests review from the listed owners for matching paths.
+
+# Default: all PRs require review from a maintainer
+*                                    @mdevaraju-architect
+
+# Governance files require project lead
+/governance/                         @mdevaraju-architect
+/governance/compliance-matrix.md     @mdevaraju-architect
+
+# Plugin code requires security review — these directly access live orgs
+/plugins/                            @mdevaraju-architect
+/plugins/_shared/                    @mdevaraju-architect
+
+# Skill promotion to 'reviewed' requires 2 maintainers (enforced here)
+/skills/**/skill-manifest.json       @mdevaraju-architect
+
+# CI workflow changes require project lead
+/.github/workflows/                  @mdevaraju-architect

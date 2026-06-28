@@ -1,0 +1,22 @@
+{
+  "name": "industries-fsc-policy-administration",
+  "version": "0.1.0",
+  "domain": "industries/fsc",
+  "capability": "policy-administration",
+  "description": "InsurancePolicy, PolicyCoverage, InsurancePolicyParticipant, underwriting, endorsement, renewal, InsurancePolicyAsset, policy lifecycle",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

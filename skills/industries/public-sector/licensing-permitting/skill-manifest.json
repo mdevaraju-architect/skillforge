@@ -1,0 +1,22 @@
+{
+  "name": "industries-public-sector-licensing-permitting",
+  "version": "0.1.0",
+  "domain": "industries/public-sector",
+  "capability": "licensing-permitting",
+  "description": "PermitApplication, inspection, licensing, permitting, renewal, violation, public sector solutions",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

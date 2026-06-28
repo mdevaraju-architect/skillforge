@@ -1,0 +1,22 @@
+{
+  "name": "platform-integration-patterns",
+  "version": "0.1.0",
+  "domain": "platform",
+  "capability": "integration-patterns",
+  "description": "REST API, SOAP, Platform Events, CDC, MuleSoft, named credentials, external services, callout, outbound message, webhook",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

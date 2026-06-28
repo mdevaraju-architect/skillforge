@@ -1,0 +1,22 @@
+{
+  "name": "agentforce-prompt-template-authoring",
+  "version": "0.1.0",
+  "domain": "agentforce",
+  "capability": "prompt-template-authoring",
+  "description": "PromptTemplate, flex template, merge field, grounding, FleX, prompt builder, Einstein generative AI",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

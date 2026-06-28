@@ -1,0 +1,22 @@
+{
+  "name": "platform-async-patterns",
+  "version": "0.1.0",
+  "domain": "platform",
+  "capability": "async-patterns",
+  "description": "Queueable, future methods, Platform Events, Change Data Capture, CDC, EventBus, BatchApex, Schedulable, async Apex",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}

@@ -1,0 +1,81 @@
+name: Run Evals
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/evals/**'
+      - 'skills/**/SKILL.md'
+
+jobs:
+  validate-evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate eval schemas
+        run: |
+          FAILED=0
+          for evals_file in skills/**/evals/evals.json; do
+            if [ -f "$evals_file" ]; then
+              python3 - "$evals_file" <<'PYEOF'
+          import json, sys
+
+          path = sys.argv[1]
+          with open(path) as f:
+              data = json.load(f)
+
+          errors = []
+
+          if 'skill' not in data:
+              errors.append("missing 'skill' key")
+          if 'evals' not in data or not isinstance(data['evals'], list):
+              errors.append("missing or invalid 'evals' array")
+          else:
+              evals = data['evals']
+              if len(evals) < 10:
+                  errors.append(f"only {len(evals)} evals (minimum 10 required)")
+              for i, ev in enumerate(evals):
+                  if 'id' not in ev:
+                      errors.append(f"eval[{i}] missing 'id'")
+                  if 'prompt' not in ev:
+                      errors.append(f"eval[{i}] missing 'prompt'")
+                  if 'must_not_contain' not in ev or not isinstance(ev['must_not_contain'], list):
+                      errors.append(f"eval[{i}] missing or invalid 'must_not_contain' array")
+                  if 'expected_topics' not in ev:
+                      errors.append(f"eval[{i}] missing 'expected_topics'")
+
+          if errors:
+              for err in errors:
+                  print(f"❌  {path}: {err}")
+              sys.exit(1)
+          else:
+              print(f"✓  {path} ({len(evals)} evals)")
+          PYEOF
+              if [ $? -ne 0 ]; then FAILED=1; fi
+            fi
+          done
+          exit $FAILED
+
+      - name: Check must_not_contain coverage (warn if empty)
+        run: |
+          for evals_file in skills/**/evals/evals.json; do
+            if [ -f "$evals_file" ]; then
+              python3 - "$evals_file" <<'PYEOF'
+          import json, sys
+          path = sys.argv[1]
+          data = json.load(open(path))
+          empty = [ev['id'] for ev in data.get('evals', [])
+                   if not ev.get('must_not_contain')]
+          if empty:
+              print(f"⚠️   {path}: evals with empty must_not_contain: {', '.join(empty)}")
+          PYEOF
+            fi
+          done

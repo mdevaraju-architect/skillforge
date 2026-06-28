@@ -1,0 +1,60 @@
+name: Security Scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Scan for hardcoded credentials and org IDs
+        run: node testing/eval-runner/security-scan.js
+
+      - name: Check for .env files accidentally committed
+        run: |
+          FAILED=0
+          for envfile in $(find . -name ".env" -not -path "./.git/*" -not -path "./node_modules/*"); do
+            echo "❌  Committed .env file: $envfile"
+            FAILED=1
+          done
+          for envfile in $(find . -name "*.pem" -not -path "./.git/*" -not -path "./node_modules/*"); do
+            echo "❌  Committed .pem file: $envfile"
+            FAILED=1
+          done
+          for envfile in $(find . -name "*.key" -not -path "./.git/*" -not -path "./node_modules/*"); do
+            echo "❌  Committed .key file: $envfile"
+            FAILED=1
+          done
+          exit $FAILED
+
+      - name: Check plugin package.json for risky dependencies
+        run: |
+          for pkg in plugins/*/package.json; do
+            if [ -f "$pkg" ]; then
+              # Warn if eval or vm2 are direct dependencies (code execution risk)
+              if grep -qE '"eval"|"vm2"|"node-eval"' "$pkg"; then
+                echo "⚠️   $pkg contains potentially risky execution dependency"
+              fi
+              echo "✓  $pkg"
+            fi
+          done
+
+      - name: Verify PLUGIN-SECURITY.md exists
+        run: |
+          if [ ! -f "plugins/PLUGIN-SECURITY.md" ]; then
+            echo "❌  plugins/PLUGIN-SECURITY.md is missing"
+            exit 1
+          fi
+          echo "✓  plugins/PLUGIN-SECURITY.md exists"

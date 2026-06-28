@@ -1,0 +1,76 @@
+{
+  "skill": "fsc-claims-process",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "fnol-required-fields",
+      "description": "Agent correctly identifies all required fields for Claim creation at FNOL",
+      "input": "What fields are required to create a Claim record in FSC at FNOL?",
+      "expected_topics": ["InsurancePolicyId", "DateOfLoss", "LossType", "LossDescription", "Status=New", "ClaimNumber auto-generated"],
+      "must_not_contain": ["SBQQ__", "CarePlan", "QuoteLineItem"]
+    },
+    {
+      "id": "claim-item-subtype-selection",
+      "description": "Agent selects correct ClaimItem subtype based on LossType",
+      "input": "A customer is filing an auto collision claim. Which ClaimItem subtype should I create?",
+      "expected_topics": ["ClaimVehicleItem", "VIN", "IsTotalLoss", "ActualCashValue"],
+      "must_not_contain": ["ClaimBuildingItem", "ClaimLifeEventItem"]
+    },
+    {
+      "id": "reserve-payment-sequence",
+      "description": "Agent enforces reserve-before-payment rule",
+      "input": "I want to create a ClaimPayment but haven't set up a ClaimReserve yet. Is that OK?",
+      "expected_topics": ["ClaimReserve must be created first", "reserve sufficiency", "ReserveAmount"],
+      "must_not_contain": ["ClaimPayment without reserve is fine"]
+    },
+    {
+      "id": "status-lifecycle",
+      "description": "Agent correctly describes the claim status transition sequence",
+      "input": "What is the correct status flow for an FSC Claim from filing to closure?",
+      "expected_topics": ["New", "Open", "In Review", "Pending Payment", "Closed", "ClaimAction"],
+      "must_not_contain": ["skip status", "directly to Closed from New"]
+    },
+    {
+      "id": "stp-eligibility",
+      "description": "Agent correctly describes STP eligibility criteria and AssessmentIndicator usage",
+      "input": "How does Straight-Through Processing work in FSC Claims?",
+      "expected_topics": ["AssessmentTask", "AssessmentIndicator", "ClaimsSTPRules__mdt", "no adjuster touch", "ClaimAction STPApprove"],
+      "must_not_contain": ["Task object", "Survey", "OpportunityStage"]
+    },
+    {
+      "id": "document-attachment",
+      "description": "Agent uses ContentDocumentLink, not Attachment",
+      "input": "How should I attach a police report to a Claim in FSC?",
+      "expected_topics": ["ContentDocumentLink", "ContentVersion", "ClaimDocument", "DocumentType"],
+      "must_not_contain": ["Attachment object", "Body field on Attachment"]
+    },
+    {
+      "id": "omnistudio-pattern",
+      "description": "Agent recommends OmniStudio for FNOL, not plain LWC",
+      "input": "What is the recommended approach to build the FNOL intake UI in FSC Claims?",
+      "expected_topics": ["OmniScript", "Integration Procedure", "DataRaptor", "FlexCard"],
+      "must_not_contain": ["build a plain LWC", "skip OmniStudio"]
+    },
+    {
+      "id": "no-cpq-drift",
+      "description": "Agent does not drift to legacy CPQ objects",
+      "input": "How do I configure pricing for a claim settlement in FSC?",
+      "expected_topics": ["ClaimReserve", "ClaimPayment", "ClaimCoverage.CoverageLimit", "deductible"],
+      "must_not_contain": ["SBQQ__", "PricebookEntry", "QuoteLineItem", "ProductCatalog"]
+    },
+    {
+      "id": "migration-load-order",
+      "description": "Agent provides correct load order for claims migration",
+      "input": "What is the correct data load order when migrating historical claims data into FSC?",
+      "expected_topics": ["InsurancePolicy before Claim", "ClaimCoverage before ClaimReserve", "ClaimReserve before ClaimPayment", "disable Flows"],
+      "must_not_contain": ["load in any order", "ClaimPayment before ClaimReserve"]
+    },
+    {
+      "id": "claim-action-audit",
+      "description": "Agent uses ClaimAction, not Task or CaseComment, for decisions",
+      "input": "An adjuster has decided to approve a claim. Where should I record this decision?",
+      "expected_topics": ["ClaimAction", "ActionType=Approve", "ActionNotes", "audit trail"],
+      "must_not_contain": ["Task", "CaseComment", "Activity"]
+    }
+  ]
+}

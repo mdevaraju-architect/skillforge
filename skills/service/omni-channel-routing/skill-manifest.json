@@ -1,0 +1,22 @@
+{
+  "name": "service-omni-channel-routing",
+  "version": "0.1.0",
+  "domain": "service",
+  "capability": "omni-channel-routing",
+  "description": "Omni-Channel, unified routing, ServiceChannel, RoutingConfiguration, skills-based routing, queue, capacity model",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Winter25",
+  "approval-tier": "draft",
+  "compliance": {
+    "org-types": [
+      "scratch",
+      "sandbox"
+    ],
+    "data-sensitivity": "none"
+  },
+  "requires-features": [],
+  "boundary": [],
+  "maintainers": [
+    "mdevaraju-architect"
+  ]
+}
