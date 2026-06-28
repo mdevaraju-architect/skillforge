@@ -190,27 +190,3 @@ InsProducerRelationship__c record B:
 
 This is valid and expected. Do not collapse these into one record.
 
----
-
-## Historical relationships (dated hierarchy records)
-
-`InsProducerRelationship__c` supports start and end dates, allowing historical modeling:
-
-```
-Record: Beacon Wealth → Sarah Jenkins
-  StartDate__c = 2006-06-01
-  EndDate__c   = 2026-06-15
-  IsActive__c  = false
-  Role__c      = Employee / Staff Representative
-
-Record: Jenkins Financial Group → Sarah Jenkins
-  StartDate__c = 2026-06-16
-  EndDate__c   = null (ongoing)
-  IsActive__c  = true
-  Role__c      = Corporate Officer / Principal
-```
-
-To query only current active relationships:
-```soql
-WHERE IsActive__c = true AND (EndDate__c = null OR EndDate__c >= TODAY)
-```
