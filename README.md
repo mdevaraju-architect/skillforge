@@ -1,6 +1,12 @@
-# Salesforce Agent Skills
+# SkillForge — the KnowledgeForce aCoE Skill Exchange
 
-An enterprise-grade, open-source library of **Agent Skills**, **MCP Plugins**, and **Agentforce Agent definitions** for Salesforce architects, developers, consultants, and implementation teams.
+> *Forge expertise. Deploy capability.*
+
+**KnowledgeForce** is an AI Center of Excellence (aCoE) concept: encode Salesforce institutional knowledge once, version it, govern it, and let it compound across every project and every agent.
+
+**SkillForge** is its implementation — an enterprise-grade, open-source library of **Agent Skills**, **MCP Plugins**, and **Agentforce Agent definitions** for Salesforce architects, developers, consultants, and implementation teams.
+
+Not documentation. Not a chatbot. Versioned, governed, deployable expertise — a claims adjudication skill, a fraud triage agent, a data migration runbook. Encoded once, reviewed by domain experts, compliance-mapped, and consumable by any AI agent on any engagement.
 
 Built for Claude Code, Cursor, and any AI coding agent that reads `SKILL.md` instruction packages.
 
