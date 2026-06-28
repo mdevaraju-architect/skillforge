@@ -55,8 +55,14 @@ async function remove(args) {
   const content = fs.readFileSync(configPath, 'utf8');
   const lines = content.split('\n');
 
-  // Find lines that reference this skill
-  const matchingLines = lines.filter(l => l.includes(opts.skill) && (l.trim().startsWith('@https://') || l.trim().startsWith('@/')));
+  // Find lines that reference this skill — match by skill name fragment in the path
+  // e.g. 'industries-fsc-claims-process' matches a line containing 'claims-process/SKILL.md'
+  const skillFragment = opts.skill.split('-').slice(-2).join('-'); // e.g. 'claims-process'
+  const matchingLines = lines.filter(l => {
+    const t = l.trim();
+    if (!t.startsWith('@https://') && !t.startsWith('@/')) return false;
+    return t.includes(opts.skill) || t.includes(skillFragment);
+  });
 
   if (matchingLines.length === 0) {
     console.log(`Skill '${opts.skill}' not found in ${configFile}.`);

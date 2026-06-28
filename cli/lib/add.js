@@ -77,12 +77,20 @@ function fetchText(url) {
 }
 
 async function resolveSkills(repo, skillPattern) {
-  const pkgUrl = `https://raw.githubusercontent.com/${repo}/main/package.json`;
+  // Use GitHub API to fetch package.json — avoids raw CDN caching
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/package.json`;
   let pkg;
   try {
-    pkg = await fetchJson(pkgUrl);
+    const meta = await fetchJson(apiUrl);
+    const content = Buffer.from(meta.content, 'base64').toString('utf8');
+    pkg = JSON.parse(content);
   } catch {
-    throw new Error(`Could not fetch package.json from ${repo}. Is this a valid SkillForge repo?`);
+    // Fallback to raw URL
+    try {
+      pkg = await fetchJson(`https://raw.githubusercontent.com/${repo}/main/package.json`);
+    } catch {
+      throw new Error(`Could not fetch package.json from ${repo}. Is this a valid SkillForge repo?`);
+    }
   }
 
   const allSkills = pkg.skills || [];
