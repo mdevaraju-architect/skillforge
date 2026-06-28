@@ -235,12 +235,20 @@ header "STEP 4 — Installing fsc-claims-process skill into Claude Code"
 if [[ "$SKIP_SKILL" == true ]]; then
   warn "Skipping skill installation (--skip-skill)"
 else
-  info "Installing fsc-claims-process skill..."
-  if npx skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent claude-code -y 2>/dev/null; then
-    pass "Skill installed"
+  info "Writing skill reference to CLAUDE.md..."
+  SKILL_REF="@https://raw.githubusercontent.com/mdevaraju-architect/skillforge/main/skills/industries/fsc/claims-process/SKILL.md"
+  CLAUDE_MD="CLAUDE.md"
+  if [[ -f "$CLAUDE_MD" ]] && grep -qF "$SKILL_REF" "$CLAUDE_MD"; then
+    pass "Skill already present in CLAUDE.md"
   else
-    warn "Skill install failed — npx skills CLI may not be available."
-    warn "Install manually: npx skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent claude-code -y"
+    if [[ -f "$CLAUDE_MD" ]] && ! grep -q "## Agent Skills" "$CLAUDE_MD"; then
+      printf '\n## Agent Skills\n\n%s\n' "$SKILL_REF" >> "$CLAUDE_MD"
+    elif [[ ! -f "$CLAUDE_MD" ]]; then
+      printf '## Agent Skills\n\n%s\n' "$SKILL_REF" > "$CLAUDE_MD"
+    else
+      printf '\n%s\n' "$SKILL_REF" >> "$CLAUDE_MD"
+    fi
+    pass "Skill reference written to CLAUDE.md"
   fi
 fi
 
