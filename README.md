@@ -62,6 +62,7 @@ Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI c
 | `industries/fsc/wealth-management` | ✅ v1.0 | FinancialAccount, household model, holdings, goals, plans, FINRA compliance |
 | `industries/fsc/mortgage-origination` | ✅ v1.0 | URLA/1003 intake, underwriting, HMDA/TRID/RESPA compliance, LOS integration, closing |
 | `industries/fsc/producer-hierarchy` | ✅ v1.0 | Multi-tier distribution (DST/RTF/CRP/Agent), ProducerRelationship, PPA, commissions, licensing |
+| `industries/fsc/household-management` | ✅ v1.0 | Household group model, membership, FinancialAccountRole, goals, plans, relationship map |
 
 ### Health Cloud
 

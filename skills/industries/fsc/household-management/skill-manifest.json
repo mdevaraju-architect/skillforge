@@ -1,0 +1,24 @@
+{
+  "name": "industries-fsc-household-management",
+  "version": "1.0.0",
+  "domain": "industries/fsc",
+  "capability": "household-management",
+  "description": "FSC Household group model — IndustriesHousehold Account, membership via AccountContactRelation, FinancialAccountRole, goals, plans, assets/liabilities, relationship map",
+  "api-version-min": "60.0",
+  "salesforce-release-min": "Summer25",
+  "approval-tier": "draft",
+  "compliance": {
+    "regulations": ["FINRA", "SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
+  },
+  "requires-features": ["FSC"],
+  "boundary": [
+    "InsurancePolicy and claims lifecycle — use industries-fsc-claims-process",
+    "Producer distribution hierarchy — use industries-fsc-producer-hierarchy",
+    "Mortgage origination and URLA — use industries-fsc-mortgage-origination",
+    "Investment holdings and portfolio management — use industries-fsc-wealth-management",
+    "FSC advisor book of business and assignment"
+  ],
+  "maintainers": ["skillforge-maintainers"]
+}

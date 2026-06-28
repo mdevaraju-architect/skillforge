@@ -1,0 +1,238 @@
+{
+  "skill": "industries-fsc-household-management",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "fsc-hh-eval-001",
+      "prompt": "I created a new Account for a financial household but the FSC Household view and rollup fields are not showing up. What RecordType does the account need?",
+      "expected_topics": [
+        "IndustriesHousehold RecordType DeveloperName",
+        "RecordType must be queried by DeveloperName not hardcoded Id",
+        "FSC Household view and rollup engine only activate with IndustriesHousehold RecordType",
+        "Generic Account RecordType does not enable FSC household components",
+        "Household page layout assignment"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "OpportunityLineItem"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-002",
+      "prompt": "Can I link a standard Contact (attached to a business account) to a household in FSC, or do I need Person Accounts?",
+      "expected_topics": [
+        "Person Accounts are required for FSC household individual member model",
+        "Standard Contacts on business accounts do not support FSC individual profile view",
+        "IsPersonAccount = true",
+        "Enabling Person Accounts is irreversible",
+        "Plan RecordType strategy before enabling"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "CaseMilestone",
+        "Territory2"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-003",
+      "prompt": "How do I add a member to an FSC household? I tried adding a lookup field on the Household Account pointing to the individual's Account, but it doesn't show up in the Household view.",
+      "expected_topics": [
+        "AccountContactRelation is the canonical household membership model",
+        "AccountId = Household Account, ContactId = Person Account's PersonContactId",
+        "Roles multipicklist on ACR (Member, Head of Household)",
+        "IsActive = true for active members",
+        "Direct lookup on Account is wrong — use ACR",
+        "FSC Household view reads from AccountContactRelation"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ProducerPolicyAssignment",
+        "ResidentialLoanApplication",
+        "AgentWork"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-004",
+      "prompt": "We have a joint checking account shared by both spouses in an FSC household. Should FinancialAccount.PrimaryOwner be set to the husband's Account, the wife's Account, or the Household Account?",
+      "expected_topics": [
+        "Joint accounts — PrimaryOwner should be the Household Account",
+        "Individual accounts — PrimaryOwner is the individual Account",
+        "PrimaryOwner drives household rollup aggregation",
+        "Setting PrimaryOwner to individual breaks household-level rollups",
+        "Total AUM and Total Assets roll up based on PrimaryOwner chain"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "ForecastingItem"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-005",
+      "prompt": "What is the difference between FinancialAccount.PrimaryOwner and FinancialAccountRole in FSC? When do I need both?",
+      "expected_topics": [
+        "PrimaryOwner is Account-to-Account ownership used for rollup aggregation",
+        "FinancialAccountRole is Contact-level fine-grained role detail",
+        "FinancialAccountRole Role picklist values: Primary Owner, Joint Owner, Beneficiary, Power of Attorney, Trustee, Successor Trustee, Guardian, Executor",
+        "Both are needed — PrimaryOwner for rollup, FinancialAccountRole for FSC views and relationship map",
+        "FSC Financial Account view and relationship map depend on FinancialAccountRole records"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "CaseMilestone",
+        "ServiceAppointment"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-006",
+      "prompt": "I want to show Total Net Worth and Total AUM on the Household Account page. Should I create custom roll-up summary fields or formula fields that aggregate from FinancialAccount?",
+      "expected_topics": [
+        "FSC provides pre-built rollup summaries — do not duplicate with custom fields",
+        "FSC Rollup Engine computes TotalNetWorth__c, TotalAssets__c, TotalLiabilities__c, TotalAUM__c",
+        "Custom roll-ups can conflict with FSC computed values",
+        "Query standard FSC rollup fields instead of creating new ones",
+        "Rollup recalculation if values are stale"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "OpportunityLineItem",
+        "Territory2"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-007",
+      "prompt": "What is the difference between Relationship__c and AccountContactRelation in FSC? I am confused about when to use each one.",
+      "expected_topics": [
+        "AccountContactRelation models household membership — Account to Contact",
+        "Relationship__c models interpersonal relationships between two Contacts",
+        "ACR answers: is this person a member of this household?",
+        "Relationship__c answers: what is the relationship between these two people?",
+        "Both are used by the FSC Relationship Map",
+        "ACR drives rollup; Relationship__c drives edges on relationship map"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "CaseMilestone",
+        "ForecastingItem"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-008",
+      "prompt": "A client has passed away. Should I delete their Contact record from Salesforce FSC, or is there a different recommended approach?",
+      "expected_topics": [
+        "Do not delete the Contact — set Contact.Deceased__c = true",
+        "Deleting cascades into FinancialAccountRole, AccountContactRelation, Relationship__c, FinancialGoal",
+        "Deceased__c = true hides the member from active FSC views",
+        "Also set AccountContactRelation.IsActive = false",
+        "Preserve all related records for FINRA and SOC 2 compliance audit trail",
+        "Update Relationship__c.IsActive__c = false on active relationships"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "AgentWork"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-009",
+      "prompt": "One spouse in a household has moved to a new address. Should I update the Household Account's BillingAddress or the Person Account's address?",
+      "expected_topics": [
+        "Update only the Person Account's PersonMailingAddress for a single member move",
+        "Household Account BillingAddress is the household shared mailing address",
+        "Only update BillingAddress on the Household Account if the entire household moves",
+        "Do not auto-sync individual address to the Household Account",
+        "PersonMailingStreet, PersonMailingCity, PersonMailingState on Person Account"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "OpportunityLineItem",
+        "ServiceAppointment"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-010",
+      "prompt": "Should I link a retirement savings goal to the Household Account or to the individual client's Account in FSC FinancialGoal?",
+      "expected_topics": [
+        "FinancialGoal.AccountId can point to household or individual",
+        "Retirement goals typically belong to the individual Account",
+        "Goals on household roll up to household view; goals on individual appear on individual profile",
+        "Household goals: home purchase, emergency fund, legacy",
+        "Individual goals: retirement, personal savings target",
+        "Establish a linkage convention per goal type"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "CaseMilestone"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-011",
+      "prompt": "A client has divorced and their ex-spouse should no longer be part of the household in FSC. Should I delete the AccountContactRelation record?",
+      "expected_topics": [
+        "Do not delete the ACR — set AccountContactRelation.IsActive = false",
+        "IsActive = false removes member from FSC household view without losing history",
+        "Deleting ACR destroys historical membership record required for FINRA audit",
+        "Also deactivate Relationship__c records for the ended marriage",
+        "FSC rollup engine excludes IsActive = false members"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ResidentialLoanApplication",
+        "ProducerPolicyAssignment",
+        "WorkOrder",
+        "ForecastingItem"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "fsc-hh-eval-012",
+      "prompt": "We are creating a new financial plan for an FSC household that already has an active plan from last year. What is the correct way to manage this in FinancialPlan?",
+      "expected_topics": [
+        "FinancialPlan.Status picklist: Draft, Active, Inactive",
+        "Set prior plan Status = Inactive before creating or activating a new plan",
+        "One active FinancialPlan per household at a time",
+        "Do not delete old FinancialPlan records — preserve for compliance and FINRA audit history",
+        "Plan lifecycle: Draft -> Active -> Inactive"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ClaimParticipant",
+        "ResidentialLoanApplication",
+        "WorkOrder",
+        "Territory2"
+      ],
+      "compliance_check": null
+    }
+  ]
+}

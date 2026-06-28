@@ -34,6 +34,12 @@
       "approval-tier": "draft"
     },
     {
+      "name": "industries-fsc-household-management",
+      "path": "skills/industries/fsc/household-management/SKILL.md",
+      "domain": "industries/fsc",
+      "approval-tier": "draft"
+    },
+    {
       "name": "agentforce-agent-design-patterns",
       "path": "skills/agentforce/agent-design-patterns/SKILL.md",
       "domain": "agentforce",
