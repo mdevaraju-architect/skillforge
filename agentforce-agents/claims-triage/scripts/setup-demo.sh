@@ -43,7 +43,7 @@ Sets up the full FSC Claims proof of concept in any FSC-enabled Salesforce org:
   1. Verifies FSC prerequisites
   2. Seeds FNOL Claim + Person Account + ClaimParticipant
   3. Deploys the Claims_Implementation_Guide GenAiPromptTemplate
-  4. Installs the fsc-claims-process skill into Claude Code
+  4. Writes the fsc-claims-process skill reference into your agent config (CLAUDE.md)
 
 ${BOLD}Usage:${NC}
   $0 --target-org <org-alias-or-username>  [options]
@@ -52,7 +52,7 @@ ${BOLD}Options:${NC}
   --target-org       <alias>    Salesforce org alias (required)
   --claimant-name    <name>     Claimant full name, default: "Jane Demo"
   --claim-name       <name>     Claim name, default: FNOL-DEMO-001
-  --skip-skill                  Skip Claude Code skill installation
+  --skip-skill                  Skip agent skill config installation
   --skip-prompt                 Skip GenAiPromptTemplate deployment
   --help                        Show this help
 
@@ -229,7 +229,7 @@ SFDX
 fi
 
 # =============================================================================
-header "STEP 4 — Installing fsc-claims-process skill into Claude Code"
+header "STEP 4 — Installing fsc-claims-process skill into your AI coding agent"
 # =============================================================================
 
 if [[ "$SKIP_SKILL" == true ]]; then
@@ -266,7 +266,7 @@ echo -e "  ${GREEN}Claim${NC}            $CLAIM_NAME  ($CLAIM_ID)"
 echo -e "  ${GREEN}Person Account${NC}   $CLAIMANT_FIRST $CLAIMANT_LAST  ($ACCOUNT_ID)"
 echo -e "  ${GREEN}ClaimParticipant${NC} Claimant role  ($CP_ID)"
 [[ "$SKIP_PROMPT" == false ]] && echo -e "  ${GREEN}Prompt Template${NC}  Claims_Implementation_Guide"
-[[ "$SKIP_SKILL" == false ]]  && echo -e "  ${GREEN}Claude Code Skill${NC} fsc-claims-process"
+[[ "$SKIP_SKILL" == false ]]  && echo -e "  ${GREEN}Agent Skill${NC}       fsc-claims-process (written to CLAUDE.md)"
 echo ""
 echo -e "${BOLD}Open in org:${NC}"
 echo "  Claim:   $ORG_URL/lightning/r/Claim/$CLAIM_ID/view"

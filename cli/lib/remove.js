@@ -21,7 +21,11 @@ function parseArgs(args) {
 
 const AGENT_CONFIGS = {
   'claude-code': 'CLAUDE.md',
-  cursor: '.cursorrules',
+  cursor: '.cursor/rules/skillforge.mdc',
+  windsurf: '.windsurfrules',
+  copilot: '.github/copilot-instructions.md',
+  cline: '.clinerules',
+  continue: '.continuerc.md',
 };
 
 async function confirm(question) {

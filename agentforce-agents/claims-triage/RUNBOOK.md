@@ -13,15 +13,27 @@ How to replicate the full KnowledgeForce FSC Claims demo in any FSC-enabled org 
 
 ---
 
-## Step 1 — Install the FSC Claims skill into Claude Code
+## Step 1 — Install the FSC Claims skill into your AI coding agent
 
-```bash
-npx skills add mdevaraju-architect/skillforge --skill fsc-claims-process --agent claude-code -y
+Add the skill to your project's agent config file. Choose the line for your agent:
+
+**Claude Code** — add to `CLAUDE.md`:
+```markdown
+## Agent Skills
+@https://raw.githubusercontent.com/mdevaraju-architect/skillforge/main/skills/industries/fsc/claims-process/SKILL.md
 ```
 
-This loads the full claims domain knowledge into your Claude Code agent — FNOL intake, adjudication, fraud/STP, reserves, payments, OmniStudio patterns, data migration, and 12 reference files.
+**Cursor** — add to `.cursor/rules/skillforge.mdc` (or use the CLI once approved):
+```markdown
+# Agent Skills (SkillForge)
+<!-- paste contents of SKILL.md here -->
+```
 
-Verify: open Claude Code and ask *"What are the required fields for a Claim FNOL in FSC?"* — the agent should answer from the skill without hallucinating.
+**Windsurf** — add to `.windsurfrules`, **Copilot** — add to `.github/copilot-instructions.md`, **Cline** — add to `.clinerules` (same embedded content pattern as Cursor).
+
+This loads the full claims domain knowledge — FNOL intake, adjudication, fraud/STP, reserves, payments, OmniStudio patterns, data migration, and 12 reference files.
+
+Verify: ask your agent *"What are the required fields for a Claim FNOL in FSC?"* — it should answer with `DateOfLoss`, `LossType`, `InsurancePolicyId`, and `Status = 'New'` without hallucinating.
 
 ---
 

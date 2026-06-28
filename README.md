@@ -8,7 +8,7 @@
 
 Not documentation. Not a chatbot. Versioned, governed, deployable expertise — a claims adjudication skill, a fraud triage agent, a data migration runbook. Encoded once, reviewed by domain experts, compliance-mapped, and consumable by any AI agent on any engagement.
 
-Built for Claude Code, Cursor, and any AI coding agent that reads `SKILL.md` instruction packages.
+Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI coding agent that reads `SKILL.md` instruction packages.
 
 ---
 
@@ -137,16 +137,30 @@ Agentforce agents deployed *into* Salesforce. These are `.agent` files + topic d
 
 ## Installation
 
+Works with Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, and Continue.
+
 ```bash
-# Install all skills for Claude Code
-npx skills add mdevaraju-architect/salesforce-agent-skills --skill '*' --agent claude-code -y
+# Claude Code
+npx @skillforge/skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent claude-code -y
 
-# Install a specific skill
-npx skills add mdevaraju-architect/salesforce-agent-skills --skill fsc-claims-process --agent claude-code -y
+# Cursor
+npx @skillforge/skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent cursor -y
 
-# List available skills
-npx skills add mdevaraju-architect/salesforce-agent-skills --list
+# Windsurf
+npx @skillforge/skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent windsurf -y
+
+# GitHub Copilot
+npx @skillforge/skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent copilot -y
+
+# Cline / Roo
+npx @skillforge/skills add mdevaraju-architect/skillforge --skill industries-fsc-claims-process --agent cline -y
+
+# List installed skills
+npx @skillforge/skills list
 ```
+
+> **Note:** The `@skillforge/skills` CLI is pending internal approval before publishing to npm.
+> Until then, add the skill manually — see the [wiki](https://github.com/mdevaraju-architect/skillforge/wiki) for agent-specific instructions.
 
 ---
 

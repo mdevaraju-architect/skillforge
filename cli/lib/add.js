@@ -5,21 +5,44 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
+// Claude Code supports @url file references — skill content loaded on demand.
+// All other agents require the skill content embedded directly in their config file.
 const AGENTS = {
   'claude-code': {
     configFile: 'CLAUDE.md',
     sectionHeader: '## Agent Skills',
     description: 'Claude Code (CLAUDE.md)',
+    embed: false,
   },
   cursor: {
-    configFile: '.cursorrules',
-    sectionHeader: '# Agent Skills',
-    description: 'Cursor (.cursorrules)',
+    configFile: '.cursor/rules/skillforge.mdc',
+    sectionHeader: '# Agent Skills (SkillForge)',
+    description: 'Cursor (.cursor/rules/skillforge.mdc)',
+    embed: true,
+  },
+  windsurf: {
+    configFile: '.windsurfrules',
+    sectionHeader: '# Agent Skills (SkillForge)',
+    description: 'Windsurf (.windsurfrules)',
+    embed: true,
+  },
+  copilot: {
+    configFile: '.github/copilot-instructions.md',
+    sectionHeader: '## Agent Skills (SkillForge)',
+    description: 'GitHub Copilot (.github/copilot-instructions.md)',
+    embed: true,
+  },
+  cline: {
+    configFile: '.clinerules',
+    sectionHeader: '# Agent Skills (SkillForge)',
+    description: 'Cline / Roo (.clinerules)',
+    embed: true,
   },
   continue: {
-    configFile: '.continuerc.json',
-    sectionHeader: null,
-    description: 'Continue (.continuerc.json)',
+    configFile: '.continuerc.md',
+    sectionHeader: '## Agent Skills (SkillForge)',
+    description: 'Continue (.continuerc.md)',
+    embed: true,
   },
 };
 
@@ -85,7 +108,6 @@ async function resolveSkills(repo, skillPattern) {
     const content = Buffer.from(meta.content, 'base64').toString('utf8');
     pkg = JSON.parse(content);
   } catch {
-    // Fallback to raw URL
     try {
       pkg = await fetchJson(`https://raw.githubusercontent.com/${repo}/main/package.json`);
     } catch {
@@ -108,8 +130,12 @@ async function resolveSkills(repo, skillPattern) {
   return [match];
 }
 
-function buildSkillRef(repo, skillPath) {
-  return `@https://raw.githubusercontent.com/${repo}/main/${skillPath}`;
+function rawUrl(repo, skillPath) {
+  return `https://raw.githubusercontent.com/${repo}/main/${skillPath}`;
+}
+
+function refLine(repo, skillPath) {
+  return `@${rawUrl(repo, skillPath)}`;
 }
 
 function readConfig(configPath) {
@@ -117,39 +143,74 @@ function readConfig(configPath) {
   return fs.readFileSync(configPath, 'utf8');
 }
 
-function writeClaudeConfig(configPath, sectionHeader, newRefs) {
+function ensureDir(filePath) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
+
+// For Claude Code — write @url reference line
+function writeRefConfig(configPath, sectionHeader, newRefs) {
   let content = readConfig(configPath);
   const lines = content.split('\n');
 
-  // Find or create the section
   let sectionIdx = lines.findIndex(l => l.trim() === sectionHeader);
   if (sectionIdx === -1) {
-    // Append section at end
     if (content && !content.endsWith('\n')) content += '\n';
-    content += `\n${sectionHeader}\n\n`;
     lines.splice(lines.length, 0, '', sectionHeader, '');
     sectionIdx = lines.length - 2;
   }
 
-  // Find existing @ refs under the section
   const added = [];
   for (const ref of newRefs) {
-    const refLine = ref;
-    // Check if already present anywhere in the file
-    if (lines.some(l => l.trim() === refLine)) {
+    if (lines.some(l => l.trim() === ref)) {
       added.push({ ref, alreadyPresent: true });
       continue;
     }
-    // Insert after section header (and any blank line after it)
     let insertAt = sectionIdx + 1;
     while (insertAt < lines.length && lines[insertAt].trim() === '') insertAt++;
-    lines.splice(insertAt, 0, refLine);
-    sectionIdx = lines.findIndex(l => l.trim() === sectionHeader); // recalc after splice
+    lines.splice(insertAt, 0, ref);
+    sectionIdx = lines.findIndex(l => l.trim() === sectionHeader);
     added.push({ ref, alreadyPresent: false });
   }
 
+  ensureDir(configPath);
   fs.writeFileSync(configPath, lines.join('\n'));
   return added;
+}
+
+// For all other agents — embed skill content directly
+function writeEmbedConfig(configPath, sectionHeader, skillName, content) {
+  const existing = readConfig(configPath);
+  const startMarker = `<!-- skillforge:${skillName}:start -->`;
+  const endMarker = `<!-- skillforge:${skillName}:end -->`;
+
+  const block = `${startMarker}\n${content.trim()}\n${endMarker}`;
+
+  let updated;
+  if (existing.includes(startMarker)) {
+    // Replace existing block
+    const re = new RegExp(`${startMarker}[\\s\\S]*?${endMarker}`, 'g');
+    updated = existing.replace(re, block);
+    ensureDir(configPath);
+    fs.writeFileSync(configPath, updated);
+    return { alreadyPresent: false, replaced: true };
+  }
+
+  // Append under section header or at end
+  const lines = existing.split('\n');
+  let sectionIdx = lines.findIndex(l => l.trim() === sectionHeader);
+  if (sectionIdx === -1) {
+    const append = (existing && !existing.endsWith('\n') ? '\n' : '') + `\n${sectionHeader}\n\n${block}\n`;
+    ensureDir(configPath);
+    fs.writeFileSync(configPath, existing + append);
+  } else {
+    let insertAt = sectionIdx + 1;
+    while (insertAt < lines.length && lines[insertAt].trim() === '') insertAt++;
+    lines.splice(insertAt, 0, block);
+    ensureDir(configPath);
+    fs.writeFileSync(configPath, lines.join('\n'));
+  }
+  return { alreadyPresent: false, replaced: false };
 }
 
 async function confirm(question) {
@@ -174,53 +235,59 @@ async function add(args) {
 
   const agentConfig = AGENTS[opts.agent];
   if (!agentConfig) {
-    throw new Error(`Unknown agent '${opts.agent}'. Supported: ${Object.keys(AGENTS).join(', ')}`);
+    const supported = Object.keys(AGENTS).join(', ');
+    throw new Error(`Unknown agent '${opts.agent}'. Supported: ${supported}`);
   }
 
   console.log(`\nResolving skills from ${opts.repo}...`);
 
-  // Resolve all skill patterns
   const resolvedSkills = [];
   for (const pattern of opts.skills) {
     const skills = await resolveSkills(opts.repo, pattern);
     resolvedSkills.push(...skills);
   }
 
-  const refs = resolvedSkills.map(s => buildSkillRef(opts.repo, s.path));
-
   console.log(`\nSkills to install:`);
   resolvedSkills.forEach((s, i) => {
-    console.log(`  ${i + 1}. ${s.name}  [${s['approval-tier']}]`);
-    console.log(`     ${refs[i]}`);
+    const action = agentConfig.embed ? 'embed content into' : 'add @reference to';
+    console.log(`  ${i + 1}. ${s.name}  [${s['approval-tier']}]  → ${action} ${agentConfig.configFile}`);
   });
   console.log(`\nTarget: ${agentConfig.description}`);
   console.log(`Config: ${path.resolve(agentConfig.configFile)}`);
 
   if (!opts.yes) {
     const ok = await confirm('\nProceed?');
-    if (!ok) {
-      console.log('Aborted.');
-      return;
+    if (!ok) { console.log('Aborted.'); return; }
+  }
+
+  if (!agentConfig.embed) {
+    // Claude Code — write @url references
+    const refs = resolvedSkills.map(s => refLine(opts.repo, s.path));
+    const results = writeRefConfig(path.resolve(agentConfig.configFile), agentConfig.sectionHeader, refs);
+    console.log('');
+    for (const r of results) {
+      console.log(r.alreadyPresent
+        ? `  ✓  Already installed: ${r.ref.split('/').slice(-2).join('/')}`
+        : `  ✓  Installed: ${r.ref.split('/').slice(-2).join('/')}`);
+    }
+  } else {
+    // All other agents — fetch and embed content
+    console.log('');
+    for (const skill of resolvedSkills) {
+      process.stdout.write(`  →  Fetching ${skill.name}...`);
+      const content = await fetchText(rawUrl(opts.repo, skill.path));
+      const result = writeEmbedConfig(
+        path.resolve(agentConfig.configFile),
+        agentConfig.sectionHeader,
+        skill.name,
+        content
+      );
+      console.log(result.replaced ? ` updated` : ` ✓  installed`);
     }
   }
 
-  const results = writeClaudeConfig(
-    path.resolve(agentConfig.configFile),
-    agentConfig.sectionHeader,
-    refs
-  );
-
-  console.log('');
-  for (const r of results) {
-    if (r.alreadyPresent) {
-      console.log(`  ✓  Already installed: ${r.ref.split('/').pop()}`);
-    } else {
-      console.log(`  ✓  Installed: ${r.ref.split('/').pop()}`);
-    }
-  }
-
-  console.log(`\nDone. Skills are active in Claude Code for this project.`);
-  console.log(`Open Claude Code and ask: "What are the required fields for a Claim FNOL in FSC?"\n`);
+  console.log(`\nDone. Open your AI coding agent and ask:`);
+  console.log(`  "What are the required fields for a Claim FNOL in Salesforce FSC?"\n`);
 }
 
 module.exports = { add };

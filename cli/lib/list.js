@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_FILES = ['CLAUDE.md', '.cursorrules'];
+const CONFIG_FILES = ['CLAUDE.md', '.cursor/rules/skillforge.mdc', '.windsurfrules', '.github/copilot-instructions.md', '.clinerules', '.continuerc.md'];
 
 function parseArgs(args) {
   const opts = { agent: null };
@@ -38,7 +38,8 @@ function parseSkillName(ref) {
 
 async function list(args) {
   const opts = parseArgs(args);
-  const filesToCheck = opts.agent ? [opts.agent === 'claude-code' ? 'CLAUDE.md' : '.cursorrules'] : CONFIG_FILES;
+  const AGENT_MAP = { 'claude-code': 'CLAUDE.md', cursor: '.cursor/rules/skillforge.mdc', windsurf: '.windsurfrules', copilot: '.github/copilot-instructions.md', cline: '.clinerules', continue: '.continuerc.md' };
+  const filesToCheck = opts.agent ? [AGENT_MAP[opts.agent] || opts.agent] : CONFIG_FILES;
 
   let found = false;
   for (const file of filesToCheck) {
@@ -59,7 +60,7 @@ async function list(args) {
 
   if (!found) {
     console.log('\nNo SkillForge skills installed in this project.');
-    console.log('Run: npx @skillforge/skills add mdevaraju-architect/skillforge --skill <name> --agent claude-code -y\n');
+    console.log('Run: npx @skillforge/skills add mdevaraju-architect/skillforge --skill <name> --agent <claude-code|cursor|windsurf|copilot|cline> -y\n');
   } else {
     console.log('');
   }

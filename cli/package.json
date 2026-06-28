@@ -1,7 +1,7 @@
 {
   "name": "@skillforge/skills",
   "version": "1.0.0",
-  "description": "CLI to install SkillForge agent skills into Claude Code and other AI coding agents",
+  "description": "CLI to install SkillForge agent skills into any AI coding agent — Claude Code, Cursor, Windsurf, Copilot, Cline, and more",
   "keywords": [
     "salesforce",
     "claude-code",
