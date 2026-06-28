@@ -1,0 +1,189 @@
+{
+  "skill": "industries-fsc-wealth-management",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "financial-account-types",
+      "description": "Agent correctly identifies FinancialAccount types and their constraints",
+      "input": "What are the different types of FinancialAccount in FSC Wealth, and are there any constraints on joint ownership for retirement accounts?",
+      "expected_topics": [
+        "FinancialAccount.FinancialAccountType",
+        "FinancialAccountType custom metadata",
+        "TraditionalIRA",
+        "RothIRA",
+        "401k",
+        "Brokerage",
+        "JointOwner not allowed on retirement accounts",
+        "IRS rule"
+      ],
+      "must_not_contain": ["InsurancePolicy", "Claim", "ClaimParticipant", "MortgageApplication", "SBQQ__", "QuoteLineItem"]
+    },
+    {
+      "id": "household-record-type",
+      "description": "Agent correctly identifies the Household Account RecordType developer name and warns against creating custom record types",
+      "input": "How do I create a Household Account in FSC? What RecordType should I use?",
+      "expected_topics": [
+        "IndustriesHousehold",
+        "RecordType DeveloperName",
+        "not a custom RecordType",
+        "FSC managed package installs it",
+        "AccountContactRelation",
+        "Household Member"
+      ],
+      "must_not_contain": ["InsurancePolicy", "Claim", "MortgageApplication", "SBQQ__", "custom RecordType named Household will work"]
+    },
+    {
+      "id": "financial-account-role-values",
+      "description": "Agent lists correct FinancialAccountRole role values for a trust account",
+      "input": "What FinancialAccountRole records do I need to create for a trust account in FSC Wealth?",
+      "expected_topics": [
+        "FinancialAccountRole",
+        "Owner",
+        "Trustee",
+        "Beneficiary",
+        "Role picklist",
+        "FinancialAccountRole.RelatedContactId",
+        "at least one Trustee required"
+      ],
+      "must_not_contain": ["ClaimParticipant", "InsurancePolicyParticipant", "MortgageApplication", "Task", "Opportunity"]
+    },
+    {
+      "id": "aum-rollup-pattern",
+      "description": "Agent correctly explains the AUM rollup architecture and warns that it is not real-time by default",
+      "input": "How does AUM roll up to the Household Account in FSC Wealth? Is it real time?",
+      "expected_topics": [
+        "TotalAum__c",
+        "FinancialAccount.Balance",
+        "not real-time by default",
+        "scheduled Apex batch",
+        "FinancialAccountSummaryBatch",
+        "platform event",
+        "rollup field not native because lookup not master-detail"
+      ],
+      "must_not_contain": ["Account.AnnualRevenue", "real-time automatically", "Claim", "InsurancePolicy", "SBQQ__"]
+    },
+    {
+      "id": "financial-goal-vs-financial-plan",
+      "description": "Agent correctly distinguishes FinancialGoal from FinancialPlan and explains the parent-child relationship",
+      "input": "What is the difference between a FinancialGoal and a FinancialPlan in FSC? How are they related?",
+      "expected_topics": [
+        "FinancialPlan is the overarching plan",
+        "FinancialGoal records are individual objectives",
+        "FinancialGoal.FinancialPlanId",
+        "many FinancialGoal records per FinancialPlan",
+        "GoalType picklist",
+        "TargetAmount",
+        "TargetDate",
+        "do not use Opportunity for goals"
+      ],
+      "must_not_contain": ["Opportunity", "Case", "Task as goal", "InsurancePolicy", "Claim", "MortgageApplication"]
+    },
+    {
+      "id": "record-alert-usage",
+      "description": "Agent uses RecordAlert (not Task or FeedItem) for compliance flags in FSC Wealth",
+      "input": "An advisor's client has a beneficiary missing on their IRA. How should I surface this compliance issue in FSC?",
+      "expected_topics": [
+        "RecordAlert",
+        "Severity = High",
+        "ParentId pointing to FinancialAccount",
+        "StatusCategory = New",
+        "FinancialAccountRole Beneficiary missing",
+        "FINRA compliance"
+      ],
+      "must_not_contain": ["Task", "FeedItem", "CaseComment", "Opportunity", "Claim", "ClaimParticipant"]
+    },
+    {
+      "id": "finra-compliance-pattern",
+      "description": "Agent correctly describes FINRA-relevant compliance patterns in FSC Wealth",
+      "input": "What FINRA rules apply to FSC Wealth Management, and how does Salesforce FSC support compliance with them?",
+      "expected_topics": [
+        "FINRA Rule 2111 suitability",
+        "FINRA Rule 4512 customer account records",
+        "KYC",
+        "ActionPlanTemplate",
+        "RecordAlert",
+        "suitability assessment",
+        "annual review",
+        "audit trail",
+        "fee disclosure"
+      ],
+      "must_not_contain": ["Claim", "ClaimParticipant", "InsurancePolicy", "MortgageApplication", "SBQQ__", "CPQ"]
+    },
+    {
+      "id": "household-vs-individual-account",
+      "description": "Agent correctly explains the difference between Household and Individual Account in FSC and how to link them",
+      "input": "In FSC Wealth, what is the difference between a Household Account and an Individual Account? How do I link a client to their household?",
+      "expected_topics": [
+        "IndustriesHousehold RecordType",
+        "IndustriesIndividual or PersonAccount",
+        "AccountContactRelation",
+        "Roles = Household Member",
+        "Contact.AccountId",
+        "separate Account records",
+        "not the same record"
+      ],
+      "must_not_contain": ["Claim", "InsurancePolicy", "MortgageApplication", "merge into one record", "same RecordType"]
+    },
+    {
+      "id": "financial-holding-relationship",
+      "description": "Agent correctly explains FinancialHolding as a child of FinancialAccount and describes HoldingType-specific fields",
+      "input": "How do I represent a bond position in FSC Wealth? What object and fields should I use?",
+      "expected_topics": [
+        "FinancialHolding",
+        "FinancialAccountId master-detail",
+        "HoldingType = Bond",
+        "FaceValue__c",
+        "CouponRate__c",
+        "MaturityDate__c",
+        "FinancialSecurity",
+        "CUSIP"
+      ],
+      "must_not_contain": ["InsurancePolicy", "Claim", "MortgageApplication", "Opportunity", "Product", "SBQQ__", "PricebookEntry"]
+    },
+    {
+      "id": "fee-schedule-model",
+      "description": "Agent correctly uses Revenue and RevenueSchedule for fee modeling, not Revenue Cloud objects",
+      "input": "How do I model a 1% annual AUM-based advisory fee in FSC Wealth? What objects should I use?",
+      "expected_topics": [
+        "Revenue object",
+        "RevenueSchedule object",
+        "FeePercentage",
+        "RevenueType = AdvisoryFee",
+        "BillingFrequency",
+        "not a native billing engine",
+        "must calculate fee amount in Apex or Flow"
+      ],
+      "must_not_contain": ["SBQQ__", "PricebookEntry", "QuoteLineItem", "ProductCatalog", "Opportunity line item", "Revenue Cloud", "Claim", "InsurancePolicy"]
+    },
+    {
+      "id": "financial-account-transaction-query",
+      "description": "Agent warns about querying FinancialAccountTransaction without date filter",
+      "input": "I want to pull all transactions for a FinancialAccount in an Apex trigger. What should I watch out for?",
+      "expected_topics": [
+        "FinancialAccountTransaction",
+        "always filter by TransactionDate",
+        "high volume",
+        "SOQL row limit",
+        "50000 rows",
+        "heap size",
+        "FinancialAccountId + TransactionDate index"
+      ],
+      "must_not_contain": ["query without date filter is fine", "Attachment", "Claim", "InsurancePolicy", "MortgageApplication"]
+    },
+    {
+      "id": "assets-and-liabilities-vs-financial-account",
+      "description": "Agent correctly distinguishes AssetsAndLiabilities from FinancialAccount",
+      "input": "A client owns a rental property worth $500K and has a $300K mortgage. Where do I record these in FSC Wealth?",
+      "expected_topics": [
+        "AssetsAndLiabilities",
+        "Type = RealEstate for the property",
+        "Type = Mortgage for the liability",
+        "IsLiability",
+        "NOT FinancialAccount",
+        "rolls into TotalAssets__c and TotalLiabilities__c",
+        "not included in TotalAum__c"
+      ],
+      "must_not_contain": ["FinancialAccount for real estate", "InsurancePolicy", "Claim", "MortgageApplication object for tracking existing mortgage balance", "SBQQ__"]
+    }
+  ]
+}

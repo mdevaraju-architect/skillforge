@@ -1,22 +1,24 @@
 {
   "name": "industries-fsc-wealth-management",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "industries/fsc",
   "capability": "wealth-management",
-  "description": "FinancialAccount, FinancialGoal, FinancialHolding, AUM, referral, advisor, relationship group, household, wealth management",
+  "description": "FSC Wealth Management — household model, financial accounts, holdings, goals, plans, and FINRA compliance patterns",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["FINRA", "SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["FSCFinancialServices"],
+  "boundary": [
+    "FSC Insurance Claims — use industries-fsc-claims-process",
+    "FSC Insurance Policy — use industries-fsc-policy-administration",
+    "FSC Mortgage Origination — use industries-fsc-mortgage-origination",
+    "Health Cloud",
+    "Revenue Cloud / CPQ"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

@@ -1,22 +1,32 @@
 {
   "name": "industries-fsc-mortgage-origination",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "industries/fsc",
   "capability": "mortgage-origination",
-  "description": "LoanApplicationLead, loan application, underwriting, closing, mortgage, LoanApplicant, origination, servicing",
+  "description": "FSC Mortgage Origination — URLA/1003 data model, underwriting, conditions, compliance (HMDA/TRID/RESPA), LOS integration, and closing",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["HMDA", "RESPA", "SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted",
+    "notes": "Mortgage application records contain PII (SSN references, DOB, income, credit scores) and are subject to HMDA, TRID, RESPA, ECOA, and Fair Housing Act requirements. Queries returning applicant data must use minimum necessary fields. Race, Ethnicity, and Sex fields on LoanApplicant are HMDA-only — do not expose to underwriters to prevent fair lending violations."
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
+  "requires-features": ["FSCMortgage"],
+  "boundary": [
+    "FSC Insurance Claims — use industries-fsc-claims-process",
+    "FSC Insurance Policy — use industries-fsc-policy-administration",
+    "FSC Wealth Management — use industries-fsc-wealth-management",
+    "Health Cloud",
+    "Revenue Cloud / CPQ"
+  ],
+  "maintainers": ["skillforge-maintainers"],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-06-27",
+      "summary": "Initial release — full mortgage origination lifecycle from URLA/1003 intake through underwriting, conditions management, HMDA/TRID/RESPA compliance, and closing"
+    }
   ]
 }

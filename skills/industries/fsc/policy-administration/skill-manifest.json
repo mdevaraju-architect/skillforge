@@ -1,22 +1,24 @@
 {
   "name": "industries-fsc-policy-administration",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "industries/fsc",
   "capability": "policy-administration",
-  "description": "InsurancePolicy, PolicyCoverage, InsurancePolicyParticipant, underwriting, endorsement, renewal, InsurancePolicyAsset, policy lifecycle",
+  "description": "FSC Insurance policy lifecycle — issuance, endorsements, renewals, cancellations, coverage, participants, and integrations",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["FINRA", "SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["FSCInsurance"],
+  "boundary": [
+    "FSC Claims — use industries-fsc-claims-process",
+    "FSC Wealth Management — use industries-fsc-wealth-management",
+    "FSC Mortgage Origination — use industries-fsc-mortgage-origination",
+    "Revenue Cloud / CPQ pricing",
+    "Health Cloud"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

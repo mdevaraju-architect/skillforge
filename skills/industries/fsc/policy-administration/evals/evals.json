@@ -1,0 +1,281 @@
+{
+  "skill": "industries-fsc-policy-administration",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "policy-status-lifecycle",
+      "description": "Agent correctly describes the InsurancePolicy status transition sequence from application to expiry",
+      "prompt": "What is the correct status lifecycle for an InsurancePolicy record in Salesforce FSC from initial creation through expiration?",
+      "expected_topics": [
+        "Draft",
+        "InReview",
+        "Quoted",
+        "Active",
+        "PendingCancellation",
+        "Cancelled",
+        "Lapsed",
+        "Expired",
+        "PolicyTransaction",
+        "status transition rules"
+      ],
+      "must_not_contain": [
+        "ClaimStatus",
+        "ClaimAction",
+        "ClaimParticipant",
+        "FinancialAccount",
+        "AssetsAndLiabilities",
+        "MortgageApplication",
+        "OpportunityStage",
+        "SBQQ__"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "coverage-required-fields",
+      "description": "Agent identifies all required fields for InsurancePolicyCoverage before policy activation",
+      "prompt": "What fields are required on InsurancePolicyCoverage before an InsurancePolicy can be activated in FSC?",
+      "expected_topics": [
+        "InsurancePolicyId",
+        "CoverageType",
+        "CoverageStartDate",
+        "CoverageEndDate",
+        "CoverageAmount",
+        "DeductibleAmount",
+        "PremiumAmount",
+        "IP_QuoteRequiresPremium validation rule"
+      ],
+      "must_not_contain": [
+        "ClaimCoverage",
+        "ClaimReserve",
+        "CoverageLimit on Claim",
+        "FinancialAccount",
+        "PricebookEntry",
+        "QuoteLineItem"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "coverage-amount-vs-deductible",
+      "description": "Agent correctly distinguishes CoverageAmount (limit) from DeductibleAmount",
+      "prompt": "In FSC Insurance, what is the difference between CoverageAmount and DeductibleAmount on InsurancePolicyCoverage?",
+      "expected_topics": [
+        "CoverageAmount is the maximum the insurer pays",
+        "DeductibleAmount is what the insured pays before coverage applies",
+        "PremiumAmount is what the insured pays for coverage",
+        "three distinct fields",
+        "do not conflate"
+      ],
+      "must_not_contain": [
+        "ClaimReserve.ReserveAmount",
+        "ClaimPayment.Amount",
+        "FinancialAccount.Balance",
+        "SBQQ__NetPrice__c",
+        "PricebookEntry.UnitPrice"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "participant-roles",
+      "description": "Agent correctly lists InsurancePolicyParticipant roles and their constraints",
+      "prompt": "What participant roles are available on InsurancePolicyParticipant in FSC Insurance, and are there any uniqueness constraints?",
+      "expected_topics": [
+        "PolicyHolder",
+        "Insured",
+        "Beneficiary",
+        "Agent",
+        "Broker",
+        "JointInsured",
+        "Payor",
+        "Mortgagee",
+        "exactly one PolicyHolder",
+        "IPP_SinglePolicyHolder validation rule"
+      ],
+      "must_not_contain": [
+        "ClaimParticipant",
+        "Claimant",
+        "Adjuster role",
+        "ThirdPartyClaimant",
+        "Witness role on claim",
+        "CareTeamMember",
+        "FinancialAccountRole"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "endorsement-vs-cancellation",
+      "description": "Agent clearly distinguishes a policy endorsement from a cancellation and explains why you must not delete-recreate coverage",
+      "prompt": "A customer wants to increase their liability coverage limit mid-term. Should I cancel and reissue the policy, or use an endorsement? What objects do I create in Salesforce FSC?",
+      "expected_topics": [
+        "endorsement not cancellation",
+        "PolicyTransaction with TransactionType Endorsement",
+        "PolicyEndorsementDate",
+        "update existing InsurancePolicyCoverage record",
+        "do not delete and recreate coverage",
+        "pro-rated premium adjustment",
+        "PolicyTransaction PremiumAdjustment"
+      ],
+      "must_not_contain": [
+        "ClaimAction",
+        "ClaimCoverage",
+        "flat cancellation to reissue",
+        "SBQQ__Amendment__c",
+        "ContractAmendment",
+        "FinancialDeal"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "reinstatement-eligibility",
+      "description": "Agent correctly states reinstatement eligibility rules including the expiration date check",
+      "prompt": "Under what conditions can a cancelled FSC Insurance policy be reinstated in Salesforce?",
+      "expected_topics": [
+        "CancellationReason must not be UnderwritingDecline or Misrepresentation",
+        "within reinstatement window days",
+        "FSCInsurancePolicySettings__c.ReinstatementWindowDays__c",
+        "PolicyExpirationDate must still be in the future",
+        "outstanding premium must be paid",
+        "underwriting review if lapse exceeds threshold",
+        "new policy required if expiration has passed"
+      ],
+      "must_not_contain": [
+        "ClaimReinstatement",
+        "reopen a claim",
+        "ClaimAction Reopen",
+        "FinancialAccount reinstatement",
+        "LoanApplication"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "renewal-creates-new-policy",
+      "description": "Agent knows that renewal creates a new InsurancePolicy record and does not extend PolicyExpirationDate in place",
+      "prompt": "How does policy renewal work in Salesforce FSC? Does it extend the existing policy's expiration date or create a new record?",
+      "expected_topics": [
+        "creates a new InsurancePolicy record",
+        "PriorPolicyId set on the new policy",
+        "expiring policy Status transitions to Expired",
+        "PolicyTransaction TransactionType Renewal on new policy",
+        "do not extend PolicyExpirationDate on existing record",
+        "new PolicyEffectiveDate equals day after prior expiration"
+      ],
+      "must_not_contain": [
+        "ContractRenewal",
+        "extend PolicyExpirationDate in place",
+        "ClaimRenewal",
+        "FinancialAccount renewal",
+        "OpportunityRenewal",
+        "SBQQ__RenewedContract__c"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "document-attachment-pattern",
+      "description": "Agent uses ContentDocumentLink and InsurancePolicyDocument, never the deprecated Attachment object",
+      "prompt": "How do I attach a declarations page PDF to an InsurancePolicy record in Salesforce FSC?",
+      "expected_topics": [
+        "ContentVersion",
+        "ContentDocumentLink",
+        "InsurancePolicyDocument",
+        "DocumentType PolicyDeclarations",
+        "LinkedEntityId",
+        "IsDeliveredElectronically",
+        "do not use Attachment object"
+      ],
+      "must_not_contain": [
+        "Attachment object",
+        "Body field on Attachment",
+        "ClaimDocument",
+        "ClaimDocumentLink",
+        "NoteAndAttachment"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "permission-set-requirements",
+      "description": "Agent identifies the correct permission sets needed for policy administration and warns against profiles-only approach",
+      "prompt": "What permission sets are required for a policy servicing agent to read and edit insurance policies in FSC?",
+      "expected_topics": [
+        "FSCInsurance permission set",
+        "FSCInsuranceAgent permission set",
+        "OmniStudioUser if using OmniStudio",
+        "permission set groups",
+        "profiles alone not sufficient",
+        "FLS for PremiumAmount and DeductibleAmount"
+      ],
+      "must_not_contain": [
+        "FSCInsuranceClaims permission set",
+        "ClaimAdjuster permission",
+        "HealthCloudAdmin",
+        "WealthManagement permission set",
+        "CPQ Admin"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "cancellation-type-distinction",
+      "description": "Agent correctly explains flat vs. pro-rata vs. short-rate cancellation and when each is used",
+      "prompt": "What are the three types of policy cancellation in FSC Insurance, and how is the return premium calculated for each?",
+      "expected_topics": [
+        "flat cancellation full return of premium",
+        "pro-rata cancellation unused days over total days",
+        "short-rate cancellation insured-initiated with penalty",
+        "FSCInsuranceShortRateTable__mdt",
+        "PolicyTransaction TransactionType Cancellation",
+        "TransactionAmount negative for return"
+      ],
+      "must_not_contain": [
+        "ClaimSettlement",
+        "ClaimPayment calculation",
+        "ClaimReserve release",
+        "FinancialAccount withdrawal",
+        "revenue recognition",
+        "SBQQ__"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "asset-coverage-relationship",
+      "description": "Agent correctly identifies that InsurancePolicyAsset links to InsurancePolicyCoverage, not directly to InsurancePolicy",
+      "prompt": "I need to link a vehicle to a policy in FSC Insurance. What object do I create and what is the parent relationship?",
+      "expected_topics": [
+        "InsurancePolicyAsset",
+        "InsurancePolicyCoverageId is the parent lookup",
+        "not directly to InsurancePolicy",
+        "AssetType Vehicle",
+        "VIN field",
+        "subquery to traverse InsurancePolicy to Coverages to Assets"
+      ],
+      "must_not_contain": [
+        "ClaimVehicleItem",
+        "ClaimBuildingItem",
+        "VehicleInsight",
+        "FinancialAsset",
+        "AssetsAndLiabilities",
+        "MortgageAsset"
+      ],
+      "compliance_check": null
+    },
+    {
+      "id": "billing-account-activation-block",
+      "description": "Agent warns that a null BillingAccountId blocks activation when the org setting is enabled",
+      "prompt": "I'm trying to activate an InsurancePolicy in FSC but it's failing. The policy has coverages and a PolicyHolder participant. What else might be missing?",
+      "expected_topics": [
+        "BillingAccountId",
+        "BillingAccount object",
+        "RequireBillingAccountForActivation FSCInsurancePolicySettings__c",
+        "BillingAccount is not a standard Account",
+        "BillingAccountType",
+        "check FSCInsurancePolicySettings__c setting"
+      ],
+      "must_not_contain": [
+        "ClaimReserve",
+        "ClaimPayment",
+        "FinancialAccount",
+        "BillingCity on Account",
+        "standard Account BillingAddress",
+        "OpportunityLineItem"
+      ],
+      "compliance_check": null
+    }
+  ]
+}

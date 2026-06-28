@@ -1,0 +1,243 @@
+{
+  "skill": "industries-fsc-mortgage-origination",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "hub-object-name",
+      "description": "Agent correctly identifies ResidentialLoanApplication as the hub object, not MortgageApplication",
+      "input": "What is the central hub object for FSC Mortgage Origination in Salesforce?",
+      "expected_topics": [
+        "ResidentialLoanApplication",
+        "hub object",
+        "LoanApplicant child",
+        "LoanApplicationProperty child"
+      ],
+      "must_not_contain": [
+        "MortgageApplication__c",
+        "MortgageApplication is the object",
+        "Claim",
+        "ClaimParticipant",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "SBQQ__"
+      ]
+    },
+    {
+      "id": "loan-applicant-vs-property",
+      "description": "Agent correctly distinguishes LoanApplicant (borrower person) from LoanApplicationProperty (collateral)",
+      "input": "I need to store the subject property address and the borrower's address. Which FSC Mortgage objects do I use?",
+      "expected_topics": [
+        "LoanApplicantAddress for borrower address",
+        "LoanApplicationProperty for subject property",
+        "AddressType",
+        "PropertyType"
+      ],
+      "must_not_contain": [
+        "put property address on LoanApplicant",
+        "put borrower address on LoanApplicationProperty",
+        "ClaimParticipant",
+        "InsurancePolicyAsset"
+      ]
+    },
+    {
+      "id": "co-borrower-handling",
+      "description": "Agent correctly models co-borrower as a second LoanApplicant with RoleOnLoan = CoBorrower",
+      "input": "How do I add a co-borrower to a ResidentialLoanApplication in FSC?",
+      "expected_topics": [
+        "LoanApplicant",
+        "RoleOnLoan = CoBorrower",
+        "ContactId",
+        "separate LoanApplicantIncome for co-borrower",
+        "separate LoanApplicantAsset for co-borrower",
+        "exactly one Borrower role per application"
+      ],
+      "must_not_contain": [
+        "add a field to the hub object",
+        "ClaimParticipant",
+        "ContactRole",
+        "OpportunityContactRole"
+      ]
+    },
+    {
+      "id": "dti-calculation-source-fields",
+      "description": "Agent correctly identifies DTI as a calculated value from LoanApplicantIncome and LoanApplicantLiability, not a stored field",
+      "input": "Where is the Debt-to-Income ratio stored in FSC Mortgage, and how is it calculated?",
+      "expected_topics": [
+        "DTI is not a stored standard field",
+        "LoanApplicantIncome.MonthlyAmount",
+        "LoanApplicantLiability.MonthlyPaymentAmount",
+        "LoanApplicationFinancial.ProposedMonthlyPayment",
+        "formula field or calculated",
+        "front-end and back-end ratio"
+      ],
+      "must_not_contain": [
+        "ResidentialLoanApplication.DTI__c is a standard field",
+        "DebtToIncomeRatio is stored automatically",
+        "ClaimReserve",
+        "FinancialGoal"
+      ]
+    },
+    {
+      "id": "urla-section-mapping",
+      "description": "Agent correctly maps URLA Section 2c liabilities to LoanApplicantLiability",
+      "input": "URLA Section 2c covers the borrower's existing debts and liabilities. Which FSC object captures this data?",
+      "expected_topics": [
+        "LoanApplicantLiability",
+        "LiabilityType",
+        "MonthlyPaymentAmount",
+        "UnpaidBalance",
+        "ExcludeFromLiabilities"
+      ],
+      "must_not_contain": [
+        "LoanApplicationFinancial",
+        "LoanApplicantAsset",
+        "AssetsAndLiabilities",
+        "FinancialAccount",
+        "ClaimReserve"
+      ]
+    },
+    {
+      "id": "hmda-required-fields",
+      "description": "Agent correctly lists HMDA LAR required fields and their FSC source objects",
+      "input": "What HMDA fields does FSC Mortgage need to capture, and where do they live in the data model?",
+      "expected_topics": [
+        "ApplicationDate on ResidentialLoanApplication",
+        "ActionTaken and ActionTakenDate",
+        "LoanApplicant.Race",
+        "LoanApplicant.Ethnicity",
+        "LoanApplicant.Sex",
+        "LoanApplicationProperty.CensusTracts",
+        "ULI",
+        "census tract must come from geocoder"
+      ],
+      "must_not_contain": [
+        "HMDA is not required",
+        "demographics auto-populate from Contact",
+        "ClaimParticipant",
+        "InsurancePolicy",
+        "SBQQ__"
+      ]
+    },
+    {
+      "id": "trid-le-timing",
+      "description": "Agent correctly states the 3-business-day Loan Estimate requirement and how to implement it in Salesforce",
+      "input": "What are the TRID timing requirements for the Loan Estimate, and how should I implement them in Salesforce FSC?",
+      "expected_topics": [
+        "3 business days from application",
+        "ApplicationDate as trigger",
+        "LEDueDate__c or equivalent",
+        "Record-Triggered Flow",
+        "business day calculation excludes Sundays and federal holidays",
+        "TRID clock does not start automatically"
+      ],
+      "must_not_contain": [
+        "Salesforce enforces TRID automatically",
+        "7 calendar days",
+        "Closing Disclosure within 3 days of application",
+        "ClaimAction",
+        "InsurancePolicy"
+      ]
+    },
+    {
+      "id": "ltv-calculation",
+      "description": "Agent correctly calculates LTV using LoanApplicationProperty fields",
+      "input": "How is Loan-to-Value (LTV) calculated in FSC Mortgage, and which fields feed into it?",
+      "expected_topics": [
+        "LoanAmount / MIN(PurchasePrice, AppraisedValue)",
+        "LoanApplicationProperty.PurchasePrice",
+        "LoanApplicationProperty.AppraisedValue",
+        "not a stored standard field",
+        "recalculate when AppraisedValue updates",
+        "PMI required above 80% LTV"
+      ],
+      "must_not_contain": [
+        "LTV is stored as a standard field",
+        "use only PurchasePrice always",
+        "use only AppraisedValue always",
+        "ClaimCoverage",
+        "FinancialHolding"
+      ]
+    },
+    {
+      "id": "rate-lock-fields",
+      "description": "Agent correctly identifies rate lock fields on ResidentialLoanApplication and the absence of a native RateLockHistory object",
+      "input": "What fields does FSC Mortgage provide for rate lock tracking, and how do I track rate lock history?",
+      "expected_topics": [
+        "RateLockDate on ResidentialLoanApplication",
+        "RateLockExpirationDate on ResidentialLoanApplication",
+        "LockPeriodDays",
+        "no native RateLockHistory object",
+        "custom RateLockHistory__c child object for lock extensions",
+        "scheduled Flow alert within 5 business days of expiry"
+      ],
+      "must_not_contain": [
+        "FSC provides a standard RateLockHistory object",
+        "rate lock fields are on LoanApplicant",
+        "ClaimAction",
+        "RevenueSchedule"
+      ]
+    },
+    {
+      "id": "los-integration-pattern",
+      "description": "Agent correctly describes the LOS integration pattern with Named Credentials and conflict resolution",
+      "input": "How should I integrate Salesforce FSC Mortgage with an external LOS like Encompass?",
+      "expected_topics": [
+        "Named Credential",
+        "no native real-time sync connector",
+        "outbound Platform Event or callout on status change",
+        "inbound webhook or scheduled polling",
+        "conflict resolution",
+        "LOS_LoanNumber__c external ID",
+        "LOS wins for status fields"
+      ],
+      "must_not_contain": [
+        "Salesforce has a native Encompass connector",
+        "real-time sync is automatic",
+        "Integration Procedure is not needed",
+        "ClaimDocument",
+        "SBQQ__"
+      ]
+    },
+    {
+      "id": "conditions-management-object",
+      "description": "Agent correctly states that FSC does not ship a native conditions object and describes the custom LoanCondition__c pattern",
+      "input": "How does FSC Mortgage handle underwriting conditions management? Is there a standard object?",
+      "expected_topics": [
+        "no native conditions object in standard FSC",
+        "custom LoanCondition__c object",
+        "ConditionType",
+        "ConditionStatus",
+        "Prior to Docs vs Prior to Funding",
+        "ClearToClose requires all Prior to Docs conditions satisfied"
+      ],
+      "must_not_contain": [
+        "FSC ships a standard LoanCondition object",
+        "use Task for conditions",
+        "use CaseComment for conditions",
+        "ClaimItem",
+        "AssessmentTask replaces conditions"
+      ]
+    },
+    {
+      "id": "mismo-xml-export",
+      "description": "Agent correctly describes MISMO 3.4 XML export pattern and which FSC objects map to MISMO elements",
+      "input": "How do I generate a MISMO 3.4 XML export from Salesforce FSC Mortgage for investor delivery?",
+      "expected_topics": [
+        "MISMO 3.4",
+        "Apex serialization of ResidentialLoanApplication + children",
+        "LoanApplicant maps to BORROWER element",
+        "LoanApplicationProperty maps to PROPERTY element",
+        "ContentDocument to store the export",
+        "Named Credential for delivery to GSE or LOS"
+      ],
+      "must_not_contain": [
+        "Salesforce generates MISMO automatically",
+        "MISMO 2.0",
+        "use DataRaptor for MISMO export",
+        "ClaimDocument",
+        "InsurancePolicy",
+        "SBQQ__"
+      ]
+    }
+  ]
+}
