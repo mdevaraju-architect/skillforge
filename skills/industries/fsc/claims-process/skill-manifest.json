@@ -21,7 +21,7 @@
     "FSC Mortgage Origination — use industries/fsc/mortgage-origination skill",
     "Generic Service Cloud Case (non-claims) — use service/case-lifecycle skill"
   ],
-  "maintainers": ["mdevaraju-architect"],
+  "maintainers": ["skillforge-maintainers"],
   "changelog": [
     {
       "version": "1.0.0",

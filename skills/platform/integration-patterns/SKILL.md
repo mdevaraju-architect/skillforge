@@ -8,7 +8,7 @@ compliance:
   data-sensitivity: "none"
 license: MIT
 metadata:
-  author: mdevaraju-architect
+  author: skillforge-maintainers
   version: 0.1.0
   domain: platform
   module: integration-patterns

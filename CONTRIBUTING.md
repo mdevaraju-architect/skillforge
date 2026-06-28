@@ -84,7 +84,7 @@ Machine-readable metadata consumed by governance tooling:
   },
   "requires-features": ["FSCInsurance", "OmniStudio"],
   "boundary": ["Health Cloud CarePlan", "Revenue Cloud pricing", "FSC Wealth/Banking"],
-  "maintainers": ["mdevaraju-architect"]
+  "maintainers": ["skillforge-maintainers"]
 }
 ```
 
