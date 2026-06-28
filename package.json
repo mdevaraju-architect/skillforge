@@ -1,5 +1,5 @@
 {
-  "name": "salesforce-agent-skills",
+  "name": "skillforge",
   "version": "1.0.0",
   "description": "Enterprise Salesforce Agent Skills, MCP Plugins, and Agentforce Agent definitions for AI coding agents",
   "skills": [
@@ -53,7 +53,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mdevaraju-architect/salesforce-agent-skills.git"
+    "url": "https://github.com/mdevaraju-architect/skillforge.git"
   },
   "license": "MIT",
   "scripts": {

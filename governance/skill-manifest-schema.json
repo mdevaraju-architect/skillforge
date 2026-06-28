@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/mdevaraju-architect/salesforce-agent-skills/governance/skill-manifest-schema.json",
+  "$id": "https://github.com/mdevaraju-architect/skillforge/governance/skill-manifest-schema.json",
   "title": "SkillManifest",
   "description": "Machine-readable metadata for a Salesforce Agent Skill",
   "type": "object",

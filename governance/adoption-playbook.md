@@ -10,9 +10,9 @@ This playbook covers how an enterprise team forks, customises, governs, and trai
 
 ```bash
 # Fork via GitHub UI, then clone your fork
-git clone https://github.com/<your-org>/salesforce-agent-skills.git
-cd salesforce-agent-skills
-git remote add upstream https://github.com/mdevaraju-architect/salesforce-agent-skills.git
+git clone https://github.com/<your-org>/skillforge.git
+cd skillforge
+git remote add upstream https://github.com/mdevaraju-architect/skillforge.git
 ```
 
 ### 1.2 Establish your baseline
@@ -122,7 +122,7 @@ Distribute a standard install command for your team:
 
 ```bash
 # Install your org's approved skill set
-npx skills add <your-org>/salesforce-agent-skills --skill '*' --agent claude-code -y
+npx skills add <your-org>/skillforge --skill '*' --agent claude-code -y
 ```
 
 Optionally, publish your fork as an npm package and instruct teams to install via package.json rather than npx.
