@@ -1,22 +1,23 @@
 {
   "name": "platform-security-and-sharing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "platform",
   "capability": "security-and-sharing",
-  "description": "sharing model, OWD, role hierarchy, sharing rules, FLS field-level security, encryption, Shield, connected app, profile, permission set",
+  "description": "Salesforce security model — OWD, sharing rules, Apex managed sharing, FLS/CRUD enforcement, Shield encryption, named credentials, event monitoring",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2", "GDPR", "PCI-DSS"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "restricted"
   },
   "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "boundary": [
+    "Identity Provider and SSO configuration",
+    "Experience Cloud / Communities sharing model",
+    "Territory Management sharing — use sales-territory-management",
+    "Shield Platform Encryption key management (Salesforce support engagement)"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

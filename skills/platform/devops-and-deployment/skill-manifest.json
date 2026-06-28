@@ -1,22 +1,23 @@
 {
   "name": "platform-devops-and-deployment",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "platform",
   "capability": "devops-and-deployment",
-  "description": "SFDX, sf CLI, scratch org, sandbox, deployment, CI/CD, change set, Gearset, Copado, metadata API, source tracking",
+  "description": "Salesforce DevOps — SFDX/sf CLI, scratch orgs, sandboxes, unlocked packages, CI/CD pipelines, delta deployment, destructive changes, code coverage",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "internal"
   },
   "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "boundary": [
+    "Salesforce DevOps Center UI (separate product)",
+    "Gearset, Copado, AutoRABIT tool-specific configuration",
+    "Performance testing and profiling — use platform-performance-and-limits",
+    "Security and permission deployment — use platform-security-and-sharing"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

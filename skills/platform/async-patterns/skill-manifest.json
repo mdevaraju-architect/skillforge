@@ -1,22 +1,23 @@
 {
   "name": "platform-async-patterns",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "platform",
   "capability": "async-patterns",
-  "description": "Queueable, future methods, Platform Events, Change Data Capture, CDC, EventBus, BatchApex, Schedulable, async Apex",
+  "description": "Salesforce async execution — @future, Queueable, Schedulable, Platform Events, CDC, Continuation, event replay, transaction finalizers",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
   "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "boundary": [
+    "Bulk data processing and Batch Apex — use platform-bulk-data-processing",
+    "Apex REST callout configuration — use platform-integration-patterns",
+    "Flow async actions (Autolaunched Flow)",
+    "Pub/Sub API external CDC consumers"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

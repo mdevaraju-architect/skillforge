@@ -1,0 +1,260 @@
+{
+  "skill": "platform-bulk-data-processing",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "eval-001",
+      "topic": "Bulk API 2.0 job lifecycle",
+      "question": "What are the steps to upload and process a CSV file using Bulk API 2.0, and what states does the job pass through?",
+      "expected_answer_contains": [
+        "POST /jobs/ingest",
+        "PUT /jobs/ingest/{jobId}/batches",
+        "PATCH",
+        "UploadComplete",
+        "InProgress",
+        "JobComplete",
+        "successfulResults",
+        "failedResults"
+      ],
+      "must_not_contain": [
+        "Database.Batchable",
+        "Database.executeBatch",
+        "InsurancePolicy",
+        "WorkOrder",
+        "FinancialAccount",
+        "CaseMilestone"
+      ],
+      "notes": "Answer must describe the full job lifecycle: create, upload, close, poll, retrieve results. Must not drift into Batch Apex patterns."
+    },
+    {
+      "id": "eval-002",
+      "topic": "Bulk API 2.0 vs Batch Apex choice",
+      "question": "When should I use Bulk API 2.0 versus Batch Apex (Database.Batchable) for a large-volume data operation?",
+      "expected_answer_contains": [
+        "Bulk API 2.0",
+        "Database.Batchable",
+        "external integration",
+        "trigger",
+        "governor",
+        "async",
+        "CSV"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ServiceAppointment",
+        "WorkOrder",
+        "ForecastingItem",
+        "CampaignMember"
+      ],
+      "notes": "Answer should compare both approaches: Bulk API for external systems / data migration; Batch Apex for platform logic, trigger execution, complex Apex processing."
+    },
+    {
+      "id": "eval-003",
+      "topic": "Database.Stateful reset behavior",
+      "question": "My batch class has an errorCount variable that always shows 1 after the batch finishes, even though I know multiple errors occurred. What is wrong?",
+      "expected_answer_contains": [
+        "Database.Stateful",
+        "resets",
+        "instance variable",
+        "serialised",
+        "execute()"
+      ],
+      "must_not_contain": [
+        "Bulk API",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "ServiceAppointment",
+        "QueryLocator"
+      ],
+      "notes": "Answer must identify missing Database.Stateful as the cause of instance variable resetting between execute() chunks."
+    },
+    {
+      "id": "eval-004",
+      "topic": "QueryLocator vs Iterable for LDV",
+      "question": "My Batch Apex job fails with 'Too many query rows: 50001' in the start() method when I query Accounts. How do I fix this?",
+      "expected_answer_contains": [
+        "Database.QueryLocator",
+        "Database.getQueryLocator",
+        "Iterable",
+        "50,000",
+        "50 million",
+        "server-side cursor"
+      ],
+      "must_not_contain": [
+        "Bulk API 2.0",
+        "hardDelete",
+        "InsurancePolicy",
+        "skinny table",
+        "FinancialAccount"
+      ],
+      "notes": "Answer must recommend switching from Iterable<SObject> to Database.QueryLocator to bypass the 50,000 SOQL row governor."
+    },
+    {
+      "id": "eval-005",
+      "topic": "allOrNone=false partial success in Batch Apex",
+      "question": "In my Batch Apex execute() method, when one record fails to update, the entire chunk is rolled back. How do I allow partial success so good records still commit?",
+      "expected_answer_contains": [
+        "Database.update",
+        "allOrNone",
+        "false",
+        "Database.SaveResult",
+        "isSuccess()",
+        "getErrors()"
+      ],
+      "must_not_contain": [
+        "Bulk API 2.0",
+        "INSERT statement",
+        "InsurancePolicy",
+        "CampaignMember",
+        "WorkOrder"
+      ],
+      "notes": "Answer must show Database.update(list, false) pattern and how to iterate SaveResult[] to collect errors."
+    },
+    {
+      "id": "eval-006",
+      "topic": "External ID field requirement for Bulk API 2.0 upsert",
+      "question": "My Bulk API 2.0 upsert job fails with INVALID_FIELD: ExternalId is not supported for Legacy_Key__c. What must I do to fix this?",
+      "expected_answer_contains": [
+        "External ID",
+        "isExternalId",
+        "field metadata",
+        "Setup",
+        "externalIdFieldName",
+        "unique"
+      ],
+      "must_not_contain": [
+        "Database.Batchable",
+        "hardDelete",
+        "InsurancePolicy",
+        "skinny table",
+        "Database.Stateful"
+      ],
+      "notes": "Answer must explain that the field requires isExternalId=true in its field metadata definition, set via Setup or Metadata API."
+    },
+    {
+      "id": "eval-007",
+      "topic": "hardDelete permission and irreversibility",
+      "question": "What permission is required to run a Bulk API 2.0 hardDelete job, and what is the key risk of using hardDelete instead of delete?",
+      "expected_answer_contains": [
+        "BulkApiHardDelete",
+        "permission",
+        "Recycle Bin",
+        "irreversible",
+        "permanent",
+        "undelete"
+      ],
+      "must_not_contain": [
+        "Database.Batchable",
+        "Database.Stateful",
+        "InsurancePolicy",
+        "ServiceAppointment",
+        "ForecastingItem"
+      ],
+      "notes": "Answer must name BulkApiHardDelete permission specifically and contrast with soft-delete (Recycle Bin) recovery."
+    },
+    {
+      "id": "eval-008",
+      "topic": "Batch Apex scope size recommendation",
+      "question": "What is the recommended scope size for Database.executeBatch when the execute() method performs a DML update on each record in the scope list?",
+      "expected_answer_contains": [
+        "200",
+        "scope",
+        "Database.executeBatch",
+        "2,000",
+        "heap",
+        "CPU"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "FinancialAccount",
+        "WorkOrder",
+        "CaseMilestone",
+        "Bulk API 2.0"
+      ],
+      "notes": "Answer should recommend 200 as the default scope for DML-heavy batches and explain why exceeding 2000 causes governor limit failures."
+    },
+    {
+      "id": "eval-009",
+      "topic": "Skinny tables require a Salesforce support case",
+      "question": "My queries on a 20-million-record Account object are slow even though I have custom indexes. A colleague suggested a skinny table. How do I enable one?",
+      "expected_answer_contains": [
+        "Salesforce Support",
+        "support case",
+        "not available",
+        "Metadata API",
+        "Setup",
+        "provisioning"
+      ],
+      "must_not_contain": [
+        "Database.Batchable",
+        "BulkAPI",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "Database.executeBatch"
+      ],
+      "notes": "Answer must state that skinny tables cannot be created via Metadata API or Setup — they require a Salesforce Support case."
+    },
+    {
+      "id": "eval-010",
+      "topic": "Parallel batch row lock risk",
+      "question": "I launched three concurrent Batch Apex jobs that all update Account records, and I'm getting UNABLE_TO_LOCK_ROW errors. What is causing this and how do I fix it?",
+      "expected_answer_contains": [
+        "row lock",
+        "concurrent",
+        "UNABLE_TO_LOCK_ROW",
+        "serialise",
+        "finish()",
+        "AsyncApexJob"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "ServiceAppointment",
+        "Bulk API 2.0",
+        "hardDelete",
+        "skinny table"
+      ],
+      "notes": "Answer must explain row lock contention from concurrent batch jobs on the same object and recommend serialisation via finish() chaining."
+    },
+    {
+      "id": "eval-011",
+      "topic": "Bulk API 2.0 7-day result retention",
+      "question": "My integration checks Bulk API 2.0 job results one week after the job completed, but the successfulResults endpoint returns 404. Why?",
+      "expected_answer_contains": [
+        "7 days",
+        "result",
+        "unavailable",
+        "retrieve",
+        "persist",
+        "deleted"
+      ],
+      "must_not_contain": [
+        "Database.Batchable",
+        "Database.Stateful",
+        "InsurancePolicy",
+        "WorkOrder",
+        "skinny table"
+      ],
+      "notes": "Answer must explain that Bulk API 2.0 result files are only available for 7 days after job completion."
+    },
+    {
+      "id": "eval-012",
+      "topic": "Batch chaining in finish()",
+      "question": "I want to run a second Batch Apex job after the first one completes. I tried calling Database.executeBatch inside execute() but it throws an exception. What is the correct approach?",
+      "expected_answer_contains": [
+        "finish()",
+        "Database.executeBatch",
+        "execute()",
+        "System.AsyncException",
+        "chain"
+      ],
+      "must_not_contain": [
+        "Bulk API 2.0",
+        "InsurancePolicy",
+        "ServiceAppointment",
+        "hardDelete",
+        "skinny table"
+      ],
+      "notes": "Answer must state that Database.executeBatch must be called from finish() (not execute()) to chain batch jobs correctly."
+    }
+  ]
+}

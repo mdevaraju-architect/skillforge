@@ -1,22 +1,22 @@
 {
   "name": "platform-performance-and-limits",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "platform",
   "capability": "performance-and-limits",
-  "description": "SOQL optimisation, governor limits, heap, CPU, query plan, index, selective query, async offloading, large data volumes",
+  "description": "Salesforce governor limits, SOQL optimisation, Apex CPU/heap profiling, trigger bulkification, LWC performance, report optimisation",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "internal"
   },
   "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "boundary": [
+    "Bulk API throughput and Batch Apex scope — use platform-bulk-data-processing",
+    "CDN and Experience Cloud page load performance",
+    "Database.Batchable scope tuning — use platform-bulk-data-processing"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

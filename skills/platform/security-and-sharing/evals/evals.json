@@ -1,0 +1,110 @@
+[
+  {
+    "id": "sec-001",
+    "description": "OWD can only open, not close — sharing rules and role hierarchy cannot restrict access below the OWD baseline",
+    "input": "Can I use sharing rules to hide certain Account records from a user group even though the Account OWD is set to Public Read Only?",
+    "expected_behavior": "The response must explain that OWD sets the floor and sharing rules can only GRANT additional access on top of OWD, never restrict it. To restrict access, the OWD must be changed to Private. Sharing rules cannot reduce access below the OWD baseline.",
+    "must_contain": ["Private", "baseline", "cannot restrict", "grant"],
+    "must_not_contain": ["PermissionSet", "FLS", "InsurancePolicy", "WorkOrder", "RowCause", "stripInaccessible"],
+    "tags": ["owd", "sharing-rules", "baseline"]
+  },
+  {
+    "id": "sec-002",
+    "description": "Custom RowCause is required for Apex managed sharing — using Manual RowCause causes shares to be deleted on owner change and to be user-deletable",
+    "input": "I wrote Apex that creates AccountShare records with RowCause = 'Manual' to give integration access to certain accounts. Users are complaining that after record reassignment, they lose access. What is wrong?",
+    "expected_behavior": "The response must explain that Manual RowCause shares are deleted when the record owner changes. It must recommend defining a custom Share Reason (custom RowCause) in Setup so that Apex managed shares survive owner changes and cannot be deleted by users.",
+    "must_contain": ["custom", "RowCause", "owner", "deleted", "Share Reason"],
+    "must_not_contain": ["FLS", "Shield", "InsurancePolicy", "AgentWork", "WITH SECURITY_ENFORCED", "deterministic"],
+    "tags": ["apex-managed-sharing", "rowcause", "owner-change"]
+  },
+  {
+    "id": "sec-003",
+    "description": "FLS is not auto-enforced in Apex — WITH SECURITY_ENFORCED throws QueryException, WITH USER_MODE silently nulls inaccessible fields",
+    "input": "What is the difference between WITH SECURITY_ENFORCED and WITH USER_MODE in an Apex SOQL query, and when should I use each?",
+    "expected_behavior": "The response must clearly distinguish: WITH SECURITY_ENFORCED throws System.QueryException if any field is inaccessible; WITH USER_MODE silently returns null for inaccessible fields and empty results for inaccessible objects. It should explain when each is appropriate (hard failure vs graceful degradation).",
+    "must_contain": ["QueryException", "null", "USER_MODE", "SECURITY_ENFORCED", "inaccessible"],
+    "must_not_contain": ["Share objects", "OWD", "InsurancePolicy", "FinancialAccount", "RowCause", "AccountShare"],
+    "tags": ["fls", "apex", "soql", "user-mode", "security-enforced"]
+  },
+  {
+    "id": "sec-004",
+    "description": "Permission sets can only grant permissions, never revoke profile-granted permissions",
+    "input": "A user has the Delete Account permission from their profile. I want to remove it for this specific user using a permission set. How do I do that?",
+    "expected_behavior": "The response must explain that permission sets are additive only and cannot revoke permissions granted by the profile. The only solutions are: change the user's profile to one without Delete Account, create a new profile without that permission, or use Muting Permission Sets within a Permission Set Group (with licensing caveats). The response must not suggest that a permission set can remove or block a profile permission.",
+    "must_contain": ["additive", "cannot revoke", "profile"],
+    "must_not_contain": ["OWD", "sharing rule", "RowCause", "InsurancePolicy", "WorkOrder", "Shield", "FLS"],
+    "tags": ["permission-sets", "profiles", "revoke"]
+  },
+  {
+    "id": "sec-005",
+    "description": "Criteria-based sharing rules re-evaluate on field change — owner-based rules only re-evaluate on ownership change",
+    "input": "I have a criteria-based sharing rule that shares Opportunities where Stage equals Closed Won with the Finance team. Will the Finance team automatically lose access if a rep changes Stage back to Negotiation?",
+    "expected_behavior": "The response must confirm that criteria-based sharing rules re-evaluate whenever the criteria field (Stage) changes. When the record no longer matches the criteria (Stage != Closed Won), the platform removes the criteria-based share and the Finance team loses access in the same transaction.",
+    "must_contain": ["re-evaluate", "criteria", "loses access", "field"],
+    "must_not_contain": ["FLS", "RowCause", "Shield", "InsurancePolicy", "AgentWork", "WITH USER_MODE"],
+    "tags": ["criteria-based-sharing", "re-evaluation", "sharing-rules"]
+  },
+  {
+    "id": "sec-006",
+    "description": "Apex managed sharing (custom RowCause) survives owner change — Manual RowCause shares do not",
+    "input": "What happens to shares created by Apex using a custom RowCause when the record's owner is changed?",
+    "expected_behavior": "The response must explain that custom RowCause shares created by Apex managed sharing are preserved when the record owner changes. Only Manual RowCause shares are deleted on owner change. This is the key reason to always use a custom RowCause for programmatic sharing rather than the Manual RowCause.",
+    "must_contain": ["custom RowCause", "preserved", "Manual", "deleted", "owner"],
+    "must_not_contain": ["FLS", "Shield", "WITH SECURITY_ENFORCED", "InsurancePolicy", "FinancialAccount", "deterministic"],
+    "tags": ["apex-managed-sharing", "rowcause", "owner-change"]
+  },
+  {
+    "id": "sec-007",
+    "description": "stripInaccessible() strips FLS-inaccessible fields from SObject records before or after DML",
+    "input": "How do I use Security.stripInaccessible() in Apex to ensure I am not reading or writing fields the running user is not allowed to access?",
+    "expected_behavior": "The response must explain the stripInaccessible method, the AccessType enum values (READABLE, CREATABLE, UPDATABLE, UPSERTABLE), how to call it before insert/update or after query, and how to retrieve the removed fields from the SObjectAccessDecision result.",
+    "must_contain": ["stripInaccessible", "AccessType", "READABLE", "CREATABLE", "SObjectAccessDecision"],
+    "must_not_contain": ["Share objects", "OWD", "RowCause", "InsurancePolicy", "WorkOrder", "Shield", "deterministic"],
+    "tags": ["fls", "apex", "stripInaccessible", "crud"]
+  },
+  {
+    "id": "sec-008",
+    "description": "Deterministic encryption is required for fields used in SOQL filters — probabilistic encryption silently returns 0 results when filtered",
+    "input": "I enabled Shield Platform Encryption on the SSN__c field using standard (probabilistic) encryption. Now my SOQL queries filtering on SSN__c return no results even when matching records exist. Why?",
+    "expected_behavior": "The response must explain that probabilistic Shield encryption uses a random IV so the same plaintext produces different ciphertext each time, making SOQL WHERE filtering impossible. The fix is to switch to deterministic encryption, which produces consistent ciphertext and enables SOQL filtering, at a slightly lower theoretical security level.",
+    "must_contain": ["deterministic", "probabilistic", "WHERE", "ciphertext", "filtering"],
+    "must_not_contain": ["FLS", "RowCause", "PermissionSet", "WorkOrder", "WITH USER_MODE", "AccountShare"],
+    "tags": ["shield-encryption", "deterministic", "probabilistic", "soql"]
+  },
+  {
+    "id": "sec-009",
+    "description": "Named Credentials must be used for callouts — never hardcode endpoint URLs or credentials in Apex",
+    "input": "Our Apex callout code has the API endpoint URL and API key stored in a Custom Setting. Is this acceptable, and is there a better approach?",
+    "expected_behavior": "The response must explain that storing credentials in Custom Settings is not acceptable for security-sensitive values (visible to admins, cannot be rotated without data change, breaks across environments). It must recommend Named Credentials (or External Credentials for API v57.0+) as the correct pattern, explaining the callout:Name syntax.",
+    "must_contain": ["Named Credential", "callout:", "Custom Setting", "rotate"],
+    "must_not_contain": ["OWD", "RowCause", "Shield", "FLS", "InsurancePolicy", "AgentWork", "stripInaccessible"],
+    "tags": ["named-credentials", "callout", "security"]
+  },
+  {
+    "id": "sec-010",
+    "description": "Connected App OAuth scopes must include `api` for Salesforce API access — refresh_token alone is not sufficient",
+    "input": "We have a Connected App set up for a backend integration. The scopes are refresh_token and offline_access. The integration can get an access token but API calls return insufficient_scope. What is wrong?",
+    "expected_behavior": "The response must identify that the `api` scope (or `full`) is missing from the Connected App's configured scopes. The refresh_token and offline_access scopes only allow obtaining new tokens; they do not grant permission to make API calls. Adding `api` to the Connected App scopes will resolve the issue.",
+    "must_contain": ["api", "scope", "insufficient_scope", "refresh_token"],
+    "must_not_contain": ["OWD", "RowCause", "FLS", "Shield", "InsurancePolicy", "WorkOrder", "stripInaccessible"],
+    "tags": ["connected-app", "oauth", "scopes", "api"]
+  },
+  {
+    "id": "sec-011",
+    "description": "Role hierarchy sharing can be disabled per custom object via the Grant Access Using Hierarchies checkbox — standard objects always have it enabled",
+    "input": "We have a custom object MyDocument__c where OWD is Private. We want records to only be visible to the record owner — not to managers in the role hierarchy. How do we prevent role hierarchy access?",
+    "expected_behavior": "The response must explain the Grant Access Using Hierarchies checkbox on the OWD for custom objects. Unchecking this box disables role hierarchy sharing for that specific object so that records are visible only to the owner (and users with explicit shares). It must note this cannot be done for standard objects like Account or Opportunity.",
+    "must_contain": ["Grant Access Using Hierarchies", "custom object", "uncheck"],
+    "must_not_contain": ["FLS", "RowCause", "Shield", "InsurancePolicy", "FinancialAccount", "WITH USER_MODE"],
+    "tags": ["role-hierarchy", "owd", "grant-access-using-hierarchies"]
+  },
+  {
+    "id": "sec-012",
+    "description": "EventLogFile expires in 24 hours without the Event Monitoring add-on — compliance requires automated export",
+    "input": "We need to retain Salesforce login and API activity logs for 90 days for our SOC2 audit. We do not have the Event Monitoring add-on. What should we do?",
+    "expected_behavior": "The response must explain that without the Event Monitoring add-on, EventLogFile rows expire after 24 hours. For 90-day retention, the options are: purchase the Event Monitoring add-on (which provides 30-day retention, still not 90 days — requiring external export), or automate daily export of EventLogFile log blobs to external storage (e.g. S3, SIEM) via scheduled Apex or ETL within the 24-hour window.",
+    "must_contain": ["24 hours", "EventLogFile", "export", "retention"],
+    "must_not_contain": ["OWD", "RowCause", "Shield", "FLS", "InsurancePolicy", "AgentWork", "deterministic"],
+    "tags": ["event-monitoring", "eventlogfile", "retention", "audit"]
+  }
+]

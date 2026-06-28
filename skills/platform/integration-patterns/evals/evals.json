@@ -1,0 +1,230 @@
+[
+  {
+    "id": "eval-001",
+    "topic": "Composite API allOrNone and subrequest limit",
+    "question": "I'm using the Composite API to insert an Account and then a Contact with AccountId from the first subrequest. What happens if the Contact insert fails and allOrNone is true? Also, what is the maximum number of subrequests I can include?",
+    "expected_answer_contains": [
+      "allOrNone",
+      "rolls back",
+      "25",
+      "referenceId"
+    ],
+    "must_not_contain": [
+      "Platform Events",
+      "CDC",
+      "HttpRequest",
+      "InsurancePolicy"
+    ],
+    "reference": "references/02-rest-and-composite.md",
+    "skill_section": "Gotcha 1"
+  },
+  {
+    "id": "eval-002",
+    "topic": "Callout from trigger workaround",
+    "question": "I have an after-insert trigger on Opportunity that needs to call an external REST API to sync the new opportunity data. The direct Http.send() call in the trigger is throwing an exception. What is the correct way to make this callout?",
+    "expected_answer_contains": [
+      "Queueable",
+      "Database.AllowsCallouts",
+      "cannot be made from triggers",
+      "future"
+    ],
+    "must_not_contain": [
+      "@RestResource",
+      "Composite API",
+      "InsurancePolicy",
+      "WorkOrder"
+    ],
+    "reference": "references/03-apex-callouts-and-rest.md",
+    "skill_section": "Gotcha 2"
+  },
+  {
+    "id": "eval-003",
+    "topic": "Named Credentials required for external callouts",
+    "question": "My developer hardcoded the external payment API URL and token directly in the Apex class. The sandbox calls work fine. What problems will we hit in production and what is the correct approach?",
+    "expected_answer_contains": [
+      "Named Credential",
+      "hardcoded",
+      "environment",
+      "credential"
+    ],
+    "must_not_contain": [
+      "allOrNone",
+      "Platform Events",
+      "InsurancePolicy",
+      "FinancialAccount"
+    ],
+    "reference": "references/03-apex-callouts-and-rest.md",
+    "skill_section": "Gotcha 3"
+  },
+  {
+    "id": "eval-004",
+    "topic": "Idempotent upsert pattern with external ID",
+    "question": "Our integration POSTs Account records to Salesforce, but when the network times out and the client retries, we get duplicate Accounts. How do we fix this so retries are safe?",
+    "expected_answer_contains": [
+      "external ID",
+      "upsert",
+      "PATCH",
+      "idempotent"
+    ],
+    "must_not_contain": [
+      "SOAP",
+      "@RestResource",
+      "InsurancePolicy",
+      "CaseMilestone"
+    ],
+    "reference": "references/05-integration-governance.md",
+    "skill_section": "Gotcha 11"
+  },
+  {
+    "id": "eval-005",
+    "topic": "External Objects OData 2.0 read-only limitation",
+    "question": "We set up Salesforce Connect with an OData 2.0 External Data Source pointing to our ERP order data. Now users want to update order status directly from Salesforce. When they try to edit the External Object record, they get an error. What is happening and what are the options?",
+    "expected_answer_contains": [
+      "OData 2.0",
+      "read-only",
+      "OData 4.0",
+      "write"
+    ],
+    "must_not_contain": [
+      "Platform Events",
+      "HttpRequest",
+      "InsurancePolicy",
+      "AgentWork"
+    ],
+    "reference": "references/04-platform-events-and-cdc-integration.md",
+    "skill_section": "Gotcha 7"
+  },
+  {
+    "id": "eval-006",
+    "topic": "@RestResource one method per verb per class",
+    "question": "I have an Apex REST class with urlMapping '/products/*'. I want two different GET handlers — one for fetching a single product by ID and one for listing all products. Can I have two @HttpGet methods in the same class?",
+    "expected_answer_contains": [
+      "one method",
+      "@HttpGet",
+      "single",
+      "urlMapping"
+    ],
+    "must_not_contain": [
+      "Platform Events",
+      "Composite API",
+      "InsurancePolicy",
+      "FinancialAccount"
+    ],
+    "reference": "references/03-apex-callouts-and-rest.md",
+    "skill_section": "Gotcha 4"
+  },
+  {
+    "id": "eval-007",
+    "topic": "API version pinning risks — silent field omission",
+    "question": "Our integration was built three years ago and is still using API version 38.0. We recently added several new custom fields to the Account object. The integration is not returning these new fields and there is no error. What is wrong?",
+    "expected_answer_contains": [
+      "API version",
+      "v38.0",
+      "silent",
+      "version"
+    ],
+    "must_not_contain": [
+      "Platform Events",
+      "Named Credential",
+      "InsurancePolicy",
+      "WorkOrder"
+    ],
+    "reference": "references/02-rest-and-composite.md",
+    "skill_section": "Gotcha 5"
+  },
+  {
+    "id": "eval-008",
+    "topic": "Platform Events over @future for trigger-to-external integration",
+    "question": "I need my Order trigger to notify an external warehouse management system whenever an order is placed. Someone suggested using @future(callout=true). Is that the right approach?",
+    "expected_answer_contains": [
+      "Platform Events",
+      "fire-and-forget",
+      "CometD",
+      "replay"
+    ],
+    "must_not_contain": [
+      "OData",
+      "ExternalDataSource",
+      "InsurancePolicy",
+      "CaseMilestone"
+    ],
+    "reference": "references/04-platform-events-and-cdc-integration.md",
+    "skill_section": "Gotcha 6"
+  },
+  {
+    "id": "eval-009",
+    "topic": "10-second callout timeout not configurable",
+    "question": "Our external ML scoring service can sometimes take 15-20 seconds to respond. How do I increase the timeout on HttpRequest in Apex to 20 seconds?",
+    "expected_answer_contains": [
+      "10 second",
+      "not configurable",
+      "Continuation",
+      "async"
+    ],
+    "must_not_contain": [
+      "allOrNone",
+      "referenceId",
+      "InsurancePolicy",
+      "FinancialAccount"
+    ],
+    "reference": "references/03-apex-callouts-and-rest.md",
+    "skill_section": "Gotcha 8"
+  },
+  {
+    "id": "eval-010",
+    "topic": "SObject Tree API 200-record limit and single root type",
+    "question": "I need to create 50 Accounts, each with 2 Contacts, in a single API call using SObject Tree API. Can I also include Cases under each Account in the same call? What are the limits?",
+    "expected_answer_contains": [
+      "200",
+      "root",
+      "tree",
+      "composite/tree"
+    ],
+    "must_not_contain": [
+      "allOrNone",
+      "Platform Events",
+      "InsurancePolicy",
+      "AgentWork"
+    ],
+    "reference": "references/02-rest-and-composite.md",
+    "skill_section": "Gotcha 9"
+  },
+  {
+    "id": "eval-011",
+    "topic": "Integration user best practices",
+    "question": "Our Salesforce-to-ERP integration uses the credentials of our senior Salesforce admin. Last week she reset her password and the integration broke for 4 hours until we figured out what happened. What is the right approach for integration credentials?",
+    "expected_answer_contains": [
+      "integration user",
+      "dedicated",
+      "API Only",
+      "password"
+    ],
+    "must_not_contain": [
+      "Composite API",
+      "Platform Events",
+      "InsurancePolicy",
+      "CaseMilestone"
+    ],
+    "reference": "references/05-integration-governance.md",
+    "skill_section": "Gotcha 10"
+  },
+  {
+    "id": "eval-012",
+    "topic": "Composite API referenceId syntax for chaining results",
+    "question": "In a Composite API request, I want to insert an Account and then insert a Contact with the AccountId set to the ID of the Account I just inserted — all in one HTTP call. How do I reference the result of the first subrequest in the second?",
+    "expected_answer_contains": [
+      "referenceId",
+      "@{",
+      ".id",
+      "compositeRequest"
+    ],
+    "must_not_contain": [
+      "Platform Events",
+      "CDC",
+      "InsurancePolicy",
+      "FinancialAccount"
+    ],
+    "reference": "references/02-rest-and-composite.md",
+    "skill_section": "Gotcha 13"
+  }
+]

@@ -1,0 +1,264 @@
+{
+  "skill": "platform-performance-and-limits",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "eval-001",
+      "topic": "SOQL in loop — 100 query limit",
+      "question": "A trigger on Opportunity fires for 200 records. The handler does [SELECT Id FROM Account WHERE Id = :opp.AccountId] inside a for loop over Trigger.new. What is the problem and how do you fix it?",
+      "must_contain": [
+        "100",
+        "SOQL",
+        "Set<Id>",
+        "Map",
+        "outside the loop"
+      ],
+      "must_not_contain": [
+        "WITH USER_MODE",
+        "heap size",
+        "InsurancePolicy",
+        "WorkOrder",
+        "refreshApex",
+        "wire"
+      ],
+      "reference": "references/04-trigger-bulkification.md",
+      "gotcha_ref": 1
+    },
+    {
+      "id": "eval-002",
+      "topic": "Non-selective query 100k threshold",
+      "question": "An Apex class queries `SELECT Id FROM Case WHERE Status = 'Open'` on an org with 2 million Case records. It throws System.QueryException: Non-selective query against large object type. Why does this happen and how do you fix it?",
+      "must_contain": [
+        "index",
+        "selective",
+        "full table scan",
+        "100,000"
+      ],
+      "must_not_contain": [
+        "DML",
+        "CPU time",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "heap",
+        "refreshApex",
+        "Trigger.new"
+      ],
+      "reference": "references/02-soql-optimisation.md",
+      "gotcha_ref": 2
+    },
+    {
+      "id": "eval-003",
+      "topic": "System.Limits.getCpuTime — 10s sync / 60s async",
+      "question": "An Apex trigger is intermittently throwing System.LimitException: Apex CPU time limit exceeded. How do you identify which code section is consuming the most CPU, and what are the synchronous and asynchronous CPU time limits?",
+      "must_contain": [
+        "getCpuTime",
+        "10,000",
+        "60,000",
+        "System.Limits"
+      ],
+      "must_not_contain": [
+        "SOQL selectivity",
+        "index",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "refreshApex",
+        "wire"
+      ],
+      "reference": "references/03-apex-profiling.md",
+      "gotcha_ref": 3
+    },
+    {
+      "id": "eval-004",
+      "topic": "System.Limits.getHeapSize — 6 MB sync / 12 MB async",
+      "question": "A synchronous Apex method loads 5,000 Account records with 40 fields each and then calls JSON.serialize() on the result. It throws System.LimitException: Apex heap size too large. What are the heap limits and how do you reduce memory usage?",
+      "must_contain": [
+        "getHeapSize",
+        "6",
+        "12",
+        "JSON.serialize",
+        "fields"
+      ],
+      "must_not_contain": [
+        "SOQL selectivity",
+        "index",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "refreshApex",
+        "Trigger.new"
+      ],
+      "reference": "references/03-apex-profiling.md",
+      "gotcha_ref": 4
+    },
+    {
+      "id": "eval-005",
+      "topic": "OFFSET 2000 limit and keyset pagination",
+      "question": "An LWC component uses a server-side paginated Apex method with SOQL OFFSET. Users report an error when navigating past page 10 (200 records per page = OFFSET 2000). What is the SOQL OFFSET limit and what is the recommended alternative?",
+      "must_contain": [
+        "2,000",
+        "keyset",
+        "WHERE Id >",
+        "ORDER BY"
+      ],
+      "must_not_contain": [
+        "DML",
+        "CPU time",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "getHeapSize",
+        "trigger"
+      ],
+      "reference": "references/02-soql-optimisation.md",
+      "gotcha_ref": 5
+    },
+    {
+      "id": "eval-006",
+      "topic": "Cross-object formula join impact on query performance",
+      "question": "Reports and queries against a 3-million-record Opportunity object have become slow since a new formula field was added that references Account.Owner.Manager.Name. Why does this formula field degrade query performance?",
+      "must_contain": [
+        "join",
+        "cross-object",
+        "formula",
+        "denormali"
+      ],
+      "must_not_contain": [
+        "DML",
+        "CPU time",
+        "InsurancePolicy",
+        "AgentWork",
+        "refreshApex",
+        "System.Limits"
+      ],
+      "reference": "references/02-soql-optimisation.md",
+      "gotcha_ref": 6
+    },
+    {
+      "id": "eval-007",
+      "topic": "Query Plan tool — cost < 1 means index used",
+      "question": "You are investigating a slow SOQL query on a large Account object in a sandbox. How do you use the Query Plan tool in Developer Console, and how do you interpret the Cost column in the output?",
+      "must_contain": [
+        "Developer Console",
+        "Query Plan",
+        "cost",
+        "< 1",
+        "index"
+      ],
+      "must_not_contain": [
+        "System.Limits",
+        "refreshApex",
+        "InsurancePolicy",
+        "AgentWork",
+        "heap",
+        "DML"
+      ],
+      "reference": "references/02-soql-optimisation.md",
+      "gotcha_ref": 7
+    },
+    {
+      "id": "eval-008",
+      "topic": "WITH USER_MODE overhead in hot paths",
+      "question": "A trigger on a high-volume object uses WITH USER_MODE on every SOQL query. A security reviewer says it is correct, but the performance team says it adds overhead. Who is right, and when is WITH USER_MODE inappropriate in performance-critical code?",
+      "must_contain": [
+        "WITH USER_MODE",
+        "FLS",
+        "overhead",
+        "performance"
+      ],
+      "must_not_contain": [
+        "SOQL selectivity",
+        "index",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "refreshApex",
+        "heap size"
+      ],
+      "reference": "SKILL.md",
+      "gotcha_ref": 8
+    },
+    {
+      "id": "eval-009",
+      "topic": "Trigger bulkification — Trigger.new is a List",
+      "question": "A developer wrote an Opportunity trigger that only processes Trigger.new[0] because they assumed one record is always saved at a time. A data load of 500 Opportunities via Data Loader only updated the first record. What is the problem?",
+      "must_contain": [
+        "Trigger.new",
+        "List",
+        "200",
+        "bulk",
+        "loop"
+      ],
+      "must_not_contain": [
+        "SOQL selectivity",
+        "index",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "refreshApex",
+        "heap size"
+      ],
+      "reference": "references/04-trigger-bulkification.md",
+      "gotcha_ref": 9
+    },
+    {
+      "id": "eval-010",
+      "topic": "Debug log 20 MB truncation",
+      "question": "You are debugging a performance issue using a debug log and the log ends with *** Log exceeded maximum size; some data may be missing ***. The slow SOQL query is not visible in the log. What caused the truncation and how do you avoid it?",
+      "must_contain": [
+        "20 MB",
+        "truncat",
+        "SYSTEM: FINEST",
+        "getCpuTime"
+      ],
+      "must_not_contain": [
+        "SOQL selectivity",
+        "index",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "refreshApex",
+        "Trigger.new"
+      ],
+      "reference": "references/03-apex-profiling.md",
+      "gotcha_ref": 10
+    },
+    {
+      "id": "eval-011",
+      "topic": "Custom index for date fields requires Salesforce support",
+      "question": "You need to make a query on a custom object filtering by a DateTime field called Processed_Date__c selective. You tried marking the field as External ID but the option is greyed out for Date fields. What are your options?",
+      "must_contain": [
+        "support",
+        "date",
+        "DateTime",
+        "External ID",
+        "Unique"
+      ],
+      "must_not_contain": [
+        "DML",
+        "CPU time",
+        "InsurancePolicy",
+        "ForecastingItem",
+        "refreshApex",
+        "heap"
+      ],
+      "reference": "references/02-soql-optimisation.md",
+      "gotcha_ref": 11
+    },
+    {
+      "id": "eval-012",
+      "topic": "LWC wire cache and refreshApex after DML",
+      "question": "An LWC component displays account details using @wire(getAccountDetails). After the user saves an edit using an @AuraEnabled method that calls update, the component still shows the old name. What is the cause and how do you fix it?",
+      "must_contain": [
+        "refreshApex",
+        "cache",
+        "wire",
+        "wiredResult"
+      ],
+      "must_not_contain": [
+        "SOQL",
+        "governor limits",
+        "InsurancePolicy",
+        "FinancialAccount",
+        "getCpuTime",
+        "Trigger.new"
+      ],
+      "reference": "references/05-lwc-and-report-performance.md",
+      "gotcha_ref": 12
+    }
+  ]
+}

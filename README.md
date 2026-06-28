@@ -28,12 +28,12 @@ Built for **Claude Code, Cursor, Windsurf, GitHub Copilot, Cline**, and any AI c
 
 | Skill | Status | Description |
 |---|---|---|
-| `platform/bulk-data-processing` | 🚧 Planned | Bulk API 2.0, batch Apex, data loader patterns, governor limits |
-| `platform/async-patterns` | 🚧 Planned | Queueable, future methods, Platform Events, Change Data Capture |
-| `platform/security-and-sharing` | 🚧 Planned | Sharing model, FLS, encryption, connected app security |
-| `platform/integration-patterns` | 🚧 Planned | REST/SOAP, Platform Events, CDC, MuleSoft, named credentials |
-| `platform/devops-and-deployment` | 🚧 Planned | SFDX, scratch orgs, CI/CD, change sets, deployment strategies |
-| `platform/performance-and-limits` | 🚧 Planned | SOQL optimisation, heap/CPU profiling, async offloading |
+| `platform/bulk-data-processing` | ✅ v1.0 | Bulk API 2.0, batch Apex, data loader patterns, governor limits |
+| `platform/async-patterns` | ✅ v1.0 | Queueable, future methods, Platform Events, Change Data Capture |
+| `platform/security-and-sharing` | ✅ v1.0 | Sharing model, FLS, encryption, connected app security |
+| `platform/integration-patterns` | ✅ v1.0 | REST/SOAP, Platform Events, CDC, MuleSoft, named credentials |
+| `platform/devops-and-deployment` | ✅ v1.0 | SFDX, scratch orgs, CI/CD, change sets, deployment strategies |
+| `platform/performance-and-limits` | ✅ v1.0 | SOQL optimisation, heap/CPU profiling, async offloading |
 
 ### Sales Cloud
 

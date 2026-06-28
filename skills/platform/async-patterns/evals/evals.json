@@ -1,0 +1,276 @@
+{
+  "skill": "platform-async-patterns",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "async-001",
+      "description": "@future cannot be called from Queueable or Batch Apex",
+      "question": "A developer has a Queueable Apex class and wants to call an @future method from inside its execute() method. What happens at runtime, and what is the correct alternative?",
+      "must_contain": [
+        "AsyncException",
+        "cannot be called from a future or batch method",
+        "Queueable"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "WorkOrder",
+        "FinancialAccount",
+        "Schedulable",
+        "Platform Event",
+        "EventBus",
+        "CDC"
+      ],
+      "tags": ["future", "queueable", "constraints"]
+    },
+    {
+      "id": "async-002",
+      "description": "Queueable can only enqueue 1 child job per execute() in production",
+      "question": "A Queueable's execute() method calls System.enqueueJob() twice in the same execution in a production org. What is the result?",
+      "must_contain": [
+        "LimitException",
+        "Too many queueable jobs added to the queue",
+        "1",
+        "one"
+      ],
+      "must_not_contain": [
+        "@future",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "Platform Event",
+        "EventBus",
+        "Schedulable",
+        "CDC",
+        "ChangeEventHeader"
+      ],
+      "tags": ["queueable", "chaining", "limits"]
+    },
+    {
+      "id": "async-003",
+      "description": "EventBus.publish() publishes only if the transaction commits",
+      "question": "A developer calls EventBus.publish() followed by a DML insert that throws a DmlException. Is the Platform Event published? Why or why not?",
+      "must_contain": [
+        "transaction",
+        "commit",
+        "not published",
+        "rollback"
+      ],
+      "must_not_contain": [
+        "InsurancePolicy",
+        "WorkOrder",
+        "CDC",
+        "ChangeEventHeader",
+        "Schedulable",
+        "CronTrigger",
+        "@future",
+        "Queueable"
+      ],
+      "tags": ["platform-events", "transactional", "EventBus"]
+    },
+    {
+      "id": "async-004",
+      "description": "CDC ChangeEventHeader.changeType uses CREATE/UPDATE/DELETE/UNDELETE, not insert/update/delete",
+      "question": "A developer writes `if (header.changeType == 'update')` in a CDC trigger subscriber to detect record updates. The code compiles but never executes. What is wrong?",
+      "must_contain": [
+        "UPDATE",
+        "CREATE",
+        "DELETE",
+        "UNDELETE",
+        "uppercase",
+        "ChangeEventHeader"
+      ],
+      "must_not_contain": [
+        "Platform Event",
+        "EventBus",
+        "Schedulable",
+        "CronTrigger",
+        "@future",
+        "Queueable",
+        "InsurancePolicy",
+        "CaseMilestone"
+      ],
+      "tags": ["cdc", "ChangeEventHeader", "changeType"]
+    },
+    {
+      "id": "async-005",
+      "description": "CDC changedFields only contains the fields that actually changed; all others are null on UPDATE events",
+      "question": "A CDC trigger subscriber reads `event.Phone` on an UPDATE AccountChangeEvent. The account has a phone number in the database, but `event.Phone` is null. Why?",
+      "must_contain": [
+        "changedFields",
+        "null",
+        "UPDATE",
+        "only changed fields",
+        "not populated"
+      ],
+      "must_not_contain": [
+        "Platform Event",
+        "EventBus",
+        "Schedulable",
+        "@future",
+        "Queueable",
+        "InsurancePolicy",
+        "WorkOrder",
+        "FinancialAccount"
+      ],
+      "tags": ["cdc", "changedFields", "sparse-payload"]
+    },
+    {
+      "id": "async-006",
+      "description": "Platform Event ReplayId -1 replays all retained events; -2 subscribes to new events only",
+      "question": "A CometD subscriber wants to receive all Platform Events published in the last 72 hours when it first connects. What ReplayId should it use, and what does ReplayId = -2 do instead?",
+      "must_contain": [
+        "-1",
+        "-2",
+        "72",
+        "replay",
+        "new events"
+      ],
+      "must_not_contain": [
+        "CDC",
+        "ChangeEventHeader",
+        "Schedulable",
+        "CronTrigger",
+        "@future",
+        "Queueable",
+        "InsurancePolicy",
+        "WorkOrder"
+      ],
+      "tags": ["platform-events", "replay", "ReplayId"]
+    },
+    {
+      "id": "async-007",
+      "description": "Schedulable Apex minimum scheduling interval is 1 minute",
+      "question": "A developer wants to run a Scheduled Apex job every 30 seconds. Is this possible with System.schedule()? What is the minimum scheduling interval, and what is the alternative for sub-minute frequency?",
+      "must_contain": [
+        "minute",
+        "minimum",
+        "not possible",
+        "Platform Event"
+      ],
+      "must_not_contain": [
+        "@future",
+        "Queueable",
+        "Database.AllowsCallouts",
+        "CDC",
+        "ChangeEventHeader",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "FinancialAccount"
+      ],
+      "tags": ["schedulable", "frequency", "limits"]
+    },
+    {
+      "id": "async-008",
+      "description": "System.enqueueJob from a trigger is limited to 1 per trigger execution in synchronous context",
+      "question": "An after-insert trigger on Account iterates Trigger.new and calls System.enqueueJob() inside the loop. When 5 accounts are inserted at once, what exception is thrown and why?",
+      "must_contain": [
+        "LimitException",
+        "Too many queueable jobs",
+        "loop",
+        "once",
+        "one"
+      ],
+      "must_not_contain": [
+        "@future",
+        "Platform Event",
+        "EventBus",
+        "CDC",
+        "ChangeEventHeader",
+        "Schedulable",
+        "InsurancePolicy",
+        "WorkOrder"
+      ],
+      "tags": ["queueable", "trigger", "enqueue-limit"]
+    },
+    {
+      "id": "async-009",
+      "description": "Transaction Finalizer is the only built-in way to handle Queueable failure",
+      "question": "A Queueable job throws an unhandled exception in its execute() method. The developer wants to retry the job and log the error. What built-in Apex mechanism supports this, and how is it registered?",
+      "must_contain": [
+        "Finalizer",
+        "System.Finalizer",
+        "System.attachFinalizer",
+        "FinalizerContext",
+        "UNHANDLED_EXCEPTION",
+        "ParentJobResult"
+      ],
+      "must_not_contain": [
+        "@future",
+        "Schedulable",
+        "CronTrigger",
+        "Platform Event",
+        "EventBus",
+        "InsurancePolicy",
+        "FinancialAccount"
+      ],
+      "tags": ["queueable", "finalizer", "error-handling"]
+    },
+    {
+      "id": "async-010",
+      "description": "Continuation is only valid in @AuraEnabled and Visualforce controller methods",
+      "question": "A developer tries to use the Continuation class inside a Queueable execute() method to make a long-running HTTP callout. What happens, and where is Continuation actually supported?",
+      "must_contain": [
+        "AuraEnabled",
+        "Visualforce",
+        "not supported",
+        "LWC",
+        "controller"
+      ],
+      "must_not_contain": [
+        "Schedulable",
+        "CronTrigger",
+        "Platform Event",
+        "EventBus",
+        "CDC",
+        "ChangeEventHeader",
+        "InsurancePolicy",
+        "CaseMilestone"
+      ],
+      "tags": ["continuation", "callout", "context"]
+    },
+    {
+      "id": "async-011",
+      "description": "Platform Event delivery order is guaranteed within a partition but not across partitions",
+      "question": "A developer relies on Platform Events being delivered in the exact order they were published. High-volume Platform Events are used. What is the ordering guarantee and what additional design is needed to ensure ordered processing?",
+      "must_contain": [
+        "partition",
+        "ordering",
+        "not guaranteed",
+        "sequence number"
+      ],
+      "must_not_contain": [
+        "CDC",
+        "ChangeEventHeader",
+        "Schedulable",
+        "CronTrigger",
+        "@future",
+        "InsurancePolicy",
+        "WorkOrder",
+        "FinancialAccount"
+      ],
+      "tags": ["platform-events", "ordering", "partition"]
+    },
+    {
+      "id": "async-012",
+      "description": "Database.AllowsCallouts enables HTTP callouts in Queueable but per-callout 10s timeout still applies",
+      "question": "A Queueable implements Database.AllowsCallouts and calls Http.send() five times. Each external call takes 15 seconds to respond. What happens?",
+      "must_contain": [
+        "10 seconds",
+        "timeout",
+        "CalloutException",
+        "10,000"
+      ],
+      "must_not_contain": [
+        "Schedulable",
+        "CronTrigger",
+        "Platform Event",
+        "EventBus",
+        "CDC",
+        "ChangeEventHeader",
+        "InsurancePolicy",
+        "CaseMilestone",
+        "FinancialAccount"
+      ],
+      "tags": ["queueable", "callout", "timeout", "Database.AllowsCallouts"]
+    }
+  ]
+}

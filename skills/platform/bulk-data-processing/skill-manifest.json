@@ -1,22 +1,22 @@
 {
   "name": "platform-bulk-data-processing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "platform",
   "capability": "bulk-data-processing",
-  "description": "Bulk API 2.0, batch Apex, DataLoader, governor limits, heap size, CPU timeout, async processing",
+  "description": "Salesforce bulk data operations — Bulk API 2.0, Batch Apex, governor limits, LDV patterns, upsert strategies, error handling",
   "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "salesforce-release-min": "Summer25",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
-    "data-sensitivity": "none"
+    "regulations": ["SOC2"],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
+    "data-sensitivity": "confidential"
   },
   "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "boundary": [
+    "Queueable chains and Platform Events — use platform-async-patterns",
+    "SOQL optimisation and profiling — use platform-performance-and-limits",
+    "CI/CD deployment pipelines — use platform-devops-and-deployment"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }

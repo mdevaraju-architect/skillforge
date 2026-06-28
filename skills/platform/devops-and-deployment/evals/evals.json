@@ -1,0 +1,252 @@
+[
+  {
+    "id": "devops-001",
+    "description": "sf CLI vs sfdx deprecation — user asks which commands to use",
+    "input": "My pipeline uses sfdx force:source:deploy and sfdx force:source:retrieve. Should I migrate to the new sf CLI? Are the old sfdx commands still supported?",
+    "expected_topics": [
+      "sf project deploy start replaces sfdx force:source:deploy",
+      "sfdx commands are deprecated as of Spring 24",
+      "sf uses noun-verb-noun pattern",
+      "migration planning recommended before removal"
+    ],
+    "must_not_contain": [
+      "InsurancePolicy",
+      "ForecastingItem",
+      "destructive changes",
+      "package",
+      "unlocked"
+    ],
+    "reference": "SKILL.md#gotcha-1",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-002",
+    "description": "75% code coverage requirement — user asks why deployment failed despite 100% class coverage",
+    "input": "I deployed a new Apex class with 100% test coverage and the deployment failed with INSUFFICIENT_CODE_COVERAGE. How is that possible?",
+    "expected_topics": [
+      "75% org-wide coverage required not just deployed class coverage",
+      "aggregate across all Apex in the org",
+      "new untested class can drop org-wide percentage",
+      "RunLocalTests runs all local tests",
+      "check ApexOrgWideCoverage"
+    ],
+    "must_not_contain": [
+      "destructiveChanges",
+      "unlocked package",
+      "InsurancePolicy",
+      "WorkOrder",
+      "scratch org definition"
+    ],
+    "reference": "SKILL.md#gotcha-2",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-003",
+    "description": "Scratch org shape does not capture data or manual config",
+    "input": "I set up a scratch org definition file with all the right features. Why does my scratch org not have the permission set assignments and named credentials that my developer sandbox has?",
+    "expected_topics": [
+      "project-scratch-def.json defines edition and features not data",
+      "permission set assignments not captured in scratch def",
+      "named credentials with credentials not captured",
+      "use sf data export to seed data separately",
+      "manual Setup configuration not captured"
+    ],
+    "must_not_contain": [
+      "managed package",
+      "destructive changes",
+      "InsurancePolicy",
+      "FinancialAccount",
+      "delta deployment"
+    ],
+    "reference": "SKILL.md#gotcha-3",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-004",
+    "description": "Unlocked package dependency install order",
+    "input": "My CI pipeline fails with PACKAGE_DEPENDENCY_NOT_MET when installing my unlocked package. The package depends on another unlocked package. What is wrong?",
+    "expected_topics": [
+      "dependencies must be installed before dependent packages",
+      "install dependency first then dependent",
+      "PACKAGE_DEPENDENCY_NOT_MET",
+      "packageAliases in sfdx-project.json",
+      "sf package install in dependency-resolved order"
+    ],
+    "must_not_contain": [
+      "scratch org expiry",
+      "destructive changes",
+      "InsurancePolicy",
+      "CaseMilestone",
+      "source tracking"
+    ],
+    "reference": "SKILL.md#gotcha-4",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-005",
+    "description": "checkonly and 10-day quick deploy window",
+    "input": "We ran a checkonly deployment that passed all tests. Can we deploy to production now without running all tests again? How does quick deploy work?",
+    "expected_topics": [
+      "sf project deploy quick uses previously validated deployment ID",
+      "10-day window from checkonly run",
+      "tests do not re-run on quick deploy",
+      "store deployment ID from checkonly output",
+      "window expires after 10 days requiring full redeploy"
+    ],
+    "must_not_contain": [
+      "package",
+      "destructive changes",
+      "InsurancePolicy",
+      "ForecastingItem",
+      "scratch org"
+    ],
+    "reference": "SKILL.md#gotcha-5",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-006",
+    "description": "Destructive changes XML required to delete components",
+    "input": "I deleted an Apex class file from my source and deployed, but the class still exists in the org. How do I actually remove metadata from an org?",
+    "expected_topics": [
+      "destructiveChanges.xml required to delete components from org",
+      "removing file from source tracking does not delete from org",
+      "destructiveChangesPost.xml for deletes after deployment",
+      "package.xml must accompany destructive changes",
+      "custom field deletion permanently removes data"
+    ],
+    "must_not_contain": [
+      "source tracking auto-calculates",
+      "scratch org",
+      "InsurancePolicy",
+      "CaseMilestone",
+      "RunSpecifiedTests"
+    ],
+    "reference": "SKILL.md#gotcha-6",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-007",
+    "description": "Source tracking availability — not available in production",
+    "input": "I am trying to use sf project deploy start to production and it says source tracking is not available. Why? How do I deploy to production without source tracking?",
+    "expected_topics": [
+      "source tracking not available in production",
+      "specify --source-dir or --metadata or --manifest explicitly",
+      "source tracking only in scratch orgs and source-tracked sandboxes",
+      "Developer Edition and classic sandboxes do not support source tracking"
+    ],
+    "must_not_contain": [
+      "managed package namespace",
+      "destructive changes",
+      "InsurancePolicy",
+      "AgentWork",
+      "unlocked package dependency"
+    ],
+    "reference": "SKILL.md#gotcha-7",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-008",
+    "description": "Managed package namespace pollution — queries need namespaced field names",
+    "input": "After installing a managed package, my SOQL queries that reference custom fields started failing. The error says field does not exist. The fields exist in Setup. What is happening?",
+    "expected_topics": [
+      "managed package namespace prefix added to all component API names",
+      "fields become mypkg__FieldName__c after package install",
+      "SOQL queries must use namespaced API names",
+      "existing field FieldName__c and namespaced mypkg__FieldName__c are different fields",
+      "Flow and trigger references also need namespace update"
+    ],
+    "must_not_contain": [
+      "scratch org expiry",
+      "destructive changes",
+      "InsurancePolicy",
+      "CaseMilestone",
+      "delta deployment"
+    ],
+    "reference": "SKILL.md#gotcha-8",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-009",
+    "description": "Scratch org expiry is irreversible — cannot recover after expiration",
+    "input": "My scratch org expired before I finished my feature. Can I recover the data and configuration from the expired scratch org?",
+    "expected_topics": [
+      "scratch org permanently deleted after expiration",
+      "no recovery possible after expiry",
+      "use --duration-days to set longer expiry up to 30 days",
+      "use sandbox for long-running environments not scratch org",
+      "Dev Hub scratch org daily limit EXCEEDED_LIMIT"
+    ],
+    "must_not_contain": [
+      "managed package",
+      "destructive changes",
+      "InsurancePolicy",
+      "FinancialAccount",
+      "delta deployment"
+    ],
+    "reference": "SKILL.md#gotcha-9",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-010",
+    "description": "RunSpecifiedTests requires complete coverage for deployed components",
+    "input": "I used RunSpecifiedTests with two test classes to speed up my production deployment, but it failed with INSUFFICIENT_CODE_COVERAGE even though those tests cover the classes I deployed. What am I missing?",
+    "expected_topics": [
+      "RunSpecifiedTests only validates coverage from listed tests",
+      "all tests providing coverage for deployed components must be listed",
+      "omitting any covering test causes INSUFFICIENT_CODE_COVERAGE failure",
+      "RunLocalTests safer but slower alternative",
+      "maintaining test-to-component mapping is operationally expensive"
+    ],
+    "must_not_contain": [
+      "scratch org",
+      "package",
+      "InsurancePolicy",
+      "AgentWork",
+      "destructiveChanges"
+    ],
+    "reference": "SKILL.md#gotcha-10",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-011",
+    "description": "Delta deployment in CI via git diff not source tracking",
+    "input": "My Salesforce project has thousands of components. Deploying everything on every PR takes 45 minutes. How do I set up delta deployments in GitHub Actions?",
+    "expected_topics": [
+      "no source tracking in CI for non-scratch org deployments",
+      "use git diff to derive changed components",
+      "sfdx-git-delta sgd automates delta manifest generation",
+      "sf sgd source delta --to HEAD --from base-branch",
+      "deploy using generated delta/package/package.xml manifest"
+    ],
+    "must_not_contain": [
+      "scratch org",
+      "checkonly",
+      "InsurancePolicy",
+      "AgentWork",
+      "package version"
+    ],
+    "reference": "SKILL.md#gotcha-11",
+    "skill": "platform-devops-and-deployment"
+  },
+  {
+    "id": "devops-012",
+    "description": "Permission set XML incompleteness — retrieved files do not capture full permission picture",
+    "input": "I retrieved a Permission Set from our UAT org and deployed it to a new sandbox, but many permissions are missing. The permission set looks different in Setup. Why?",
+    "expected_topics": [
+      "retrieved permission set XML only includes explicitly set permissions",
+      "unset permissions are omitted from the XML",
+      "redeployed permission set does not recreate original fully",
+      "profiles are especially lossy in source format",
+      "full retrieval requires all component types in package.xml"
+    ],
+    "must_not_contain": [
+      "scratch org",
+      "package",
+      "destructive changes",
+      "InsurancePolicy",
+      "CaseMilestone"
+    ],
+    "reference": "SKILL.md#gotcha-12",
+    "skill": "platform-devops-and-deployment"
+  }
+]

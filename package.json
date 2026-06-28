@@ -92,6 +92,42 @@
       "path": "skills/service/field-service/SKILL.md",
       "domain": "service",
       "approval-tier": "draft"
+    },
+    {
+      "name": "platform-bulk-data-processing",
+      "path": "skills/platform/bulk-data-processing/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "platform-async-patterns",
+      "path": "skills/platform/async-patterns/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "platform-security-and-sharing",
+      "path": "skills/platform/security-and-sharing/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "platform-integration-patterns",
+      "path": "skills/platform/integration-patterns/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "platform-devops-and-deployment",
+      "path": "skills/platform/devops-and-deployment/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
+    },
+    {
+      "name": "platform-performance-and-limits",
+      "path": "skills/platform/performance-and-limits/SKILL.md",
+      "domain": "platform",
+      "approval-tier": "draft"
     }
   ],
   "keywords": [
