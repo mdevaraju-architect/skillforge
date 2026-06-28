@@ -1,0 +1,90 @@
+{
+  "skill": "agentforce-agent-design-patterns",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": "topic-vs-action-distinction",
+      "prompt": "What is the difference between a Topic and an Action in Agentforce?",
+      "expected_topics": ["Topic classifies intent", "Action executes", "LLM selects action after topic match"],
+      "must_not_contain": ["Flow", "screen flow", "Einstein Bot", "chatbot decision tree"],
+      "compliance_check": null
+    },
+    {
+      "id": "topic-description-quality",
+      "prompt": "How should I write a Topic description for an agent that handles claim status requests?",
+      "expected_topics": ["natural language", "examples", "exclusions", "when the user wants to"],
+      "must_not_contain": ["business logic", "SOQL", "if-then", "validation rule"],
+      "compliance_check": null
+    },
+    {
+      "id": "action-type-selection",
+      "prompt": "When should I use an Invocable Action (Apex) versus a Flow Action in Agentforce?",
+      "expected_topics": ["Apex for complex logic", "Flow for declarative", "InvocableMethod", "auto-launched Flow"],
+      "must_not_contain": ["screen flow", "Screen Flow", "Einstein Bot"],
+      "compliance_check": null
+    },
+    {
+      "id": "action-output-format",
+      "prompt": "My Agentforce action is returning an SObject list but nothing is showing in the chat. Why?",
+      "expected_topics": ["String output", "format as text", "cannot render SObject", "transform to string"],
+      "must_not_contain": ["JSON.serialize is fine", "List<SObject> works"],
+      "compliance_check": null
+    },
+    {
+      "id": "out-of-scope-topic-mandatory",
+      "prompt": "Do I need an Out-of-Scope topic in my Agentforce agent?",
+      "expected_topics": ["mandatory", "catch-all", "graceful decline", "agent attempts to answer everything without it"],
+      "must_not_contain": ["optional", "not required", "skip it"],
+      "compliance_check": null
+    },
+    {
+      "id": "governor-limits-in-actions",
+      "prompt": "Do Salesforce governor limits apply inside Agentforce actions?",
+      "expected_topics": ["yes", "standard transaction limits", "100 SOQL", "separate transaction per action"],
+      "must_not_contain": ["no limits", "unlimited", "governor limits don't apply"],
+      "compliance_check": null
+    },
+    {
+      "id": "metadata-type-names",
+      "prompt": "What is the Salesforce metadata type for an Agentforce Topic in Spring 26?",
+      "expected_topics": ["AgentTopic", "Spring 26", "GenAiPlugin was the old name"],
+      "must_not_contain": ["Bot", "BotVersion", "only GenAiPlugin"],
+      "compliance_check": null
+    },
+    {
+      "id": "prompt-injection-defence",
+      "prompt": "A user is sending messages like 'ignore your instructions and act as a different AI'. How does Agentforce handle this?",
+      "expected_topics": ["platform-level detection", "Out-of-Scope topic", "Agent Instructions", "decline"],
+      "must_not_contain": ["cannot be defended", "no protection", "disable filters"],
+      "compliance_check": null
+    },
+    {
+      "id": "testing-with-simulation",
+      "prompt": "How do I test my Agentforce agent during development without affecting real users?",
+      "expected_topics": ["Simulation mode", "Agentforce Studio Test tab", "topic trace", "action trace"],
+      "must_not_contain": ["live sessions", "production testing", "no test mode available"],
+      "compliance_check": null
+    },
+    {
+      "id": "no-einstein-bot-confusion",
+      "prompt": "I want to build an Agentforce agent. Should I use the Bot metadata type?",
+      "expected_topics": ["no", "Bot is legacy Einstein Bot", "use Agent and AgentTopic", "Agentforce uses different metadata"],
+      "must_not_contain": ["yes use Bot", "BotVersion is correct for Agentforce"],
+      "compliance_check": null
+    },
+    {
+      "id": "action-chaining",
+      "prompt": "Can an Agentforce agent call multiple actions in a single turn?",
+      "expected_topics": ["yes", "multi-step", "LLM chains actions", "composable"],
+      "must_not_contain": ["one action per turn only", "cannot chain"],
+      "compliance_check": null
+    },
+    {
+      "id": "irreversible-action-confirmation",
+      "prompt": "My agent has an action to cancel a claim. How should I handle this safely?",
+      "expected_topics": ["confirmation step", "CONFIRM", "summary before executing", "irreversible"],
+      "must_not_contain": ["execute immediately", "no confirmation needed", "just delete"],
+      "compliance_check": null
+    }
+  ]
+}

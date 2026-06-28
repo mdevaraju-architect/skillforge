@@ -1,22 +1,24 @@
 {
   "name": "agentforce-agent-design-patterns",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "domain": "agentforce",
   "capability": "agent-design-patterns",
-  "description": "Agentforce, agent topic, agent action, guardrail, agent design, system prompt, Einstein Copilot, Service Agent",
-  "api-version-min": "60.0",
-  "salesforce-release-min": "Winter25",
+  "description": "Design, build, test, and troubleshoot Agentforce agents — Topics, Actions, guardrails, channels, testing, and evaluation patterns",
+  "api-version-min": "62.0",
+  "salesforce-release-min": "Spring26",
   "approval-tier": "draft",
   "compliance": {
-    "org-types": [
-      "scratch",
-      "sandbox"
-    ],
+    "regulations": [],
+    "org-types": ["scratch", "sandbox", "uat", "production"],
     "data-sensitivity": "none"
   },
-  "requires-features": [],
-  "boundary": [],
-  "maintainers": [
-    "skillforge-maintainers"
-  ]
+  "requires-features": ["AgentforceEnabled", "EinsteinGenerativeAI"],
+  "boundary": [
+    "Prompt Builder / GenAiPromptTemplate in isolation — use agentforce-prompt-template-authoring",
+    "Data Cloud grounding — use data-cloud-identity-resolution",
+    "Legacy Einstein Bots (Bot/BotVersion metadata) — not covered",
+    "Flow Builder internals — use platform-async-patterns",
+    "FSC Claims Triage agent specifics — use industries-fsc-claims-process"
+  ],
+  "maintainers": ["skillforge-maintainers"]
 }
